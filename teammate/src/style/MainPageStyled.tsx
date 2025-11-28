@@ -182,7 +182,7 @@ export const ingProjectDdayBox = styled.div`
 `
 
 export const ingProjectDday = styled.p<{ dday: number }>`
-    color: ${(props) => (props.dday <= 3 ? "#FD1414" : "#000")};
+    color: ${(props) => (props.dday <= 7 ? "#FD1414" : "#000")};
     font-size: 14px;
     font-weight: 600;
     line-height: 26px;
