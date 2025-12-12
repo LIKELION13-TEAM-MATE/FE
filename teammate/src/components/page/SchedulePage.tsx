@@ -7,6 +7,18 @@ function SchedulePage(){
   const [selectedDate, setSelectedDate] = useState<number | null>(null);
   const dates = [null, null, null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 ,19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]; //임시데이터
 
+  // 날짜별 일정 개수 (임시)
+const scheduleCountByDate: Record<number, number> = {
+  7: 2,
+  9: 1,
+  10: 1,
+  11: 1,
+  22: 4,
+};
+
+//오늘 날짜
+// const today = new Date().getDate();
+const today = 16; //임시날짜(확인용!)
 
   return(
     <ScheduleWrapper>
@@ -50,13 +62,22 @@ function SchedulePage(){
             {dates.map((date, index) => {
               const isSunday = index % 7 === 0;
               return (
-                <DayDate
-                  key={index}
-                  isSelected={selectedDate === date}
-                  isSunday={isSunday}
-                  onClick={() => date && setSelectedDate(date)}
-                >
-                  {date}
+                  <DayDate
+                    key={index}
+                    isToday={date === today}
+                    isSelected={date !== null && selectedDate === date}
+                    isSunday={isSunday}
+                    onClick={() => date && setSelectedDate(date)}
+                  >
+                  <DateNumber>{date}</DateNumber>
+
+                  {date && scheduleCountByDate[date] && (
+                    <DotContainer>
+                      {Array.from({ length: scheduleCountByDate[date] }).map((_, i) => (
+                        <Dot key={i} />
+                      ))}
+                    </DotContainer>
+                  )}
                 </DayDate>
               );
             })}
@@ -172,21 +193,25 @@ const DayDateBox = styled.div`
   text-align: center;
   place-items: center;
 `;
-const DayDate = styled.div<{ isSelected?: boolean; isSunday?: boolean; }>`
+const DayDate = styled.div<{ isToday?: boolean; isSelected?: boolean; isSunday?: boolean; }>`
   height: 32px;
   line-height: 32px;
   cursor: pointer;
+  
+    background-color: ${({ isSelected, isToday }) => {
+    if (isSelected) return "#BBBBBB";   // 회색 (선택)
+    if (isToday) return "#4DAFFE";      // 파랑 (오늘)
+    return "transparent";
+  }};
 
-  background-color: ${({ isSelected }) =>
-    isSelected ? "#CFE3FF" : "transparent"};
   border-radius: 50%;
   width: 30px;
   height: 30px;
 
   color: ${({ isSunday }) => (isSunday ? "#FF4D4F" : "#000")};
 
-  background-color: ${({ isSelected }) =>
-    isSelected ? "#CFE3FF" : "transparent"};
+  /* background-color: ${({ isSelected }) =>
+    isSelected ? "#CFE3FF" : "transparent"}; */
 `;
 
 //일정
@@ -278,6 +303,21 @@ color: #4DAFFE;
 font-weight: 500;
 cursor: pointer;`;
 
-
+//점
+const DateNumber = styled.div`
+  line-height: 30px;
+`;
+const DotContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 2px;
+`;
+const Dot = styled.div`
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #f4a261; /* 사진 속 주황 */
+`;
 
 export default SchedulePage;
