@@ -7,6 +7,7 @@ import { Route, Routes, Outlet } from 'react-router-dom';
 // 페이지 이 밑으로 쭉 정리해주세요.
 import MainPage from './components/page/MainPage';
 import RolePage from './components/page/RolePage';
+import SchedulePage from './components/page/SchedulePage';
 
 //페이지 외 요소들은 이 밑으로 정리해주세요.
 
@@ -30,7 +31,8 @@ function App() {
         
           <Route path="/" element={<MainPage />}></Route>
           <Route path="/RolePage" element={<RolePage />}></Route>
-      
+          <Route path="/SchedulePage" element={<SchedulePage />}></Route>
+
         </Route>
       </Routes>
     </WebShell>

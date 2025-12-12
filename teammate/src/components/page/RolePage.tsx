@@ -7,7 +7,7 @@ function RolePage() {
   return (
     <RoleWrapper>
       {/* 공동 헤더 컴포넌트 추가 */}
-      <ScheduleContainer>
+      <RoleContainer>
         <AddContainer>
             <AddBox>
             <AddBtn>기획</AddBtn>
@@ -45,7 +45,7 @@ function RolePage() {
           <TrashImgBox>
           <img src={trash} alt="trash" style={{ width:'35px', height:'35px' }}/>
           </TrashImgBox>
-      </ScheduleContainer>
+      </RoleContainer>
     </RoleWrapper>
   );  
 
@@ -55,7 +55,7 @@ const RoleWrapper = styled.div`
   background-color: #F8FAFC;
 `;
 
-const ScheduleContainer = styled.div`
+const RoleContainer = styled.div`
   width: 295px;
   height: 613px;
   min-height: 90vh;
