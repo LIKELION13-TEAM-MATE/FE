@@ -7,7 +7,6 @@ function RolePage() {
   return (
     <RoleWrapper>
       {/* 공동 헤더 컴포넌트 추가 */}
-      SchedulePage
       <ScheduleContainer>
         <AddContainer>
             <AddBox>
@@ -57,10 +56,10 @@ const RoleWrapper = styled.div`
 `;
 
 const ScheduleContainer = styled.div`
-  width: 345px;
+  width: 295px;
   height: 613px;
   min-height: 90vh;
-  margin: 25px;
+  /* margin: 25px; */
   border-radius: 20px;
   background-color: #FFFFFF;
   box-shadow: 0px 1px 6px rgba(198, 198, 198, 0.8);
@@ -74,9 +73,8 @@ const AddContainer = styled.div`
   border-bottom: 2px solid #F0F0F0;
   display: flex;
   gap:20px;
-   display: grid;
-  /* grid-template-columns: repeat(4, 1fr); */
- grid-template-columns: repeat(auto-fill, minmax(80px, auto));
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, auto));
 
 `;
 const AddBox = styled.div`
@@ -88,7 +86,7 @@ const AddBox = styled.div`
   /* width: 128px; */
   height: 38px;
   gap: 8px;
-  padding: 3px 0 3px 0;
+  padding: 3px 8px 3px 8px;
 `;
 
 const AddBtn = styled.div`
