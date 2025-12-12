@@ -139,7 +139,6 @@ const ScheduleWrapper = styled.div`
 `;
 
 const ScheduleContainer = styled.div`
-  width: 340px;
   min-height: 90vh;
   /* background-color: #ffd7d7; */
   padding: 23px;
