@@ -9,6 +9,7 @@ import MainPage from './components/page/MainPage';
 import RolePage from './components/page/RolePage';
 import SchedulePage from './components/page/SchedulePage';
 import AddSchedulePage from './components/page/AddSchedulePage';
+import ViewSchedulePage from './components/page/ViewSchedulePage';
 
 //페이지 외 요소들은 이 밑으로 정리해주세요.
 
@@ -34,7 +35,9 @@ function App() {
           <Route path="/RolePage" element={<RolePage />}></Route>
           <Route path="/SchedulePage" element={<SchedulePage />}></Route>
           <Route path="/AddSchedulePage" element={<AddSchedulePage />}></Route>
+          <Route path="/ViewSchedulePage" element={<ViewSchedulePage />}></Route>
           
+
         </Route>
       </Routes>
     </WebShell>
