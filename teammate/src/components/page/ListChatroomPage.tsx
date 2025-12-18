@@ -3,6 +3,7 @@ import styled from "styled-components";
 import search from "../../assets/search.svg";
 import circle from "../../assets/message-circle-plus.svg";
 import PF from "../../assets/Ellipse2.svg";
+import { Link } from "react-router-dom";
 
 function ListChatroomPage() {
   return (
@@ -20,11 +21,13 @@ function ListChatroomPage() {
           </SearchInputImg>
         </SearchCR>
         <PlusCR>
-          <img
-            src={circle}
-            alt="circle"
-            style={{ width: "20px", height: "20px" }}
-          />
+          <Link to="/CreateChatroomPage">
+            <img
+              src={circle}
+              alt="circle"
+              style={{ width: "20px", height: "20px" }}
+            />
+          </Link>
         </PlusCR>
       </SearchCBox>
       <ChatroomListConT>
