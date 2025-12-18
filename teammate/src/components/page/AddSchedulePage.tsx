@@ -1,7 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Plugin from "../../assets/Plugin.svg";
 import fPlugin from "../../assets/fPlugin.svg";
+import Header from "../layouts/HeaderComponent";
+import Nav from "../layouts/NavComponent";
+import { Link } from "react-router-dom";
+import api from "../../lib/axios";
+import { useLocation } from "react-router-dom";
 
 function AddSchedulePage() {
   const [title, setTitle] = useState("");
@@ -12,19 +18,57 @@ function AddSchedulePage() {
   const [memo, setMemo] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const navigate = useNavigate();
+
+  const toISO = (day: string, time: string) => {
+    return new Date(`${day}T${time}`).toISOString();
+  };
+
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const eventId = params.get("eventId"); // 있으면 수정
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log({
+    const payload = {
       title,
-      startDay,
-      startTime,
-      endDay,
-      endTime,
       memo,
-      isPrivate,
-    });
+      startDateTime: `${startDay}T${startTime}`,
+      endDateTime: `${endDay}T${endTime}`,
+      allDay: isAllDay,
+      repeatType: repeat,
+      alarmOffsetMinutes: Number(alarm),
+      participantIds: [2, 5], // 임시
+      visibleToParticipantsOnly: isPrivate,
+    };
+
+    if (eventId) {
+      // 수정
+      await api.put(`/api/v1/projects/1/events/${eventId}`, payload);
+    } else {
+      // 생성
+      await api.post(`/api/v1/projects/1/events`, payload);
+    }
   };
+
+  useEffect(() => {
+    if (!eventId) return;
+
+    const fetchEvent = async () => {
+      const res = await api.get(`/api/v1/projects/1/events/${eventId}`);
+
+      const e = res.data;
+
+      setTitle(e.title);
+      setMemo(e.memo);
+      setIsAllDay(e.allDay);
+      setRepeat(e.repeatType);
+      setAlarm(String(e.alarmOffsetMinutes));
+    };
+
+    fetchEvent();
+  }, [eventId]);
 
   // 글씨 색 변경
   const [repeat, setRepeat] = useState("안함");
@@ -36,11 +80,19 @@ function AddSchedulePage() {
 
   return (
     <AddScheduleWrapper>
+      <HDCon>
+        <Header></Header>
+      </HDCon>
+      <NavCon>
+        <Nav></Nav>
+      </NavCon>
       {/* 공동 헤더 컴포넌트 추가 */}
       <ScheduleControlBox onSubmit={handleSubmit}>
         <ScheduleControl>
-          <ScheduleCancell>취소</ScheduleCancell>
-          <ScheduleAdd type="submit">추가</ScheduleAdd>
+          <Link to="/SchedulePage">
+            <ScheduleCancell>취소</ScheduleCancell>
+          </Link>
+          <ScheduleAdd type="submit"> {eventId ? "수정" : "추가"}</ScheduleAdd>
         </ScheduleControl>
         <AddBox>
           <AddTitleBox>
@@ -185,6 +237,17 @@ function AddSchedulePage() {
 const AddScheduleWrapper = styled.div`
   width: 100%;
   align-items: stretch;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+  /* overflow-y: auto; */
+  width: 100%;
+  height: auto;
+  p {
+    margin: 0;
+    font-family: Pretendard;
+  }
 `;
 
 const ScheduleControl = styled.div`
@@ -475,6 +538,15 @@ const Memo = styled.textarea`
     color: #d4d4d4;
     font-size: 14px;
   }
+`;
+
+const NavCon = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+const HDCon = styled.div`
+  display: flex;
+  justify-content: center;
 `;
 
 export default AddSchedulePage;

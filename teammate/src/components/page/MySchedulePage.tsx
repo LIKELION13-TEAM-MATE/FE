@@ -5,52 +5,53 @@ import Header from "../layouts/HeaderComponent";
 import Nav from "../layouts/NavComponent";
 import { Link } from "react-router-dom";
 import api from "../../lib/axios";
+import Footer from "../layouts/TapBarComponent";
 
-function SchedulePage() {
+function MySchedulePage() {
   //날짜 선택 관리
   const [scheduleCountByDate, setScheduleCountByDate] = useState<
     Record<number, number>
   >({});
 
-  useEffect(() => {
-    const fetchMonthEvents = async () => {
-      const res = await api.get(`/api/v1/projects/1/events/month`, {
-        params: {
-          year: 2025,
-          month: 11,
-        },
-      });
+  // useEffect(() => {
+  //   const fetchMonthEvents = async () => {
+  //     const res = await api.get(`/api/v1/projects/1/events/month`, {
+  //       params: {
+  //         year: 2025,
+  //         month: 11,
+  //       },
+  //     });
 
-      const map: Record<number, number> = {};
-      res.data.forEach((item: any) => {
-        const day = new Date(item.date).getDate();
-        map[day] = item.eventCount;
-      });
+  //     const map: Record<number, number> = {};
+  //     res.data.forEach((item: any) => {
+  //       const day = new Date(item.date).getDate();
+  //       map[day] = item.eventCount;
+  //     });
 
-      setScheduleCountByDate(map);
-    };
+  //     setScheduleCountByDate(map);
+  //   };
 
-    fetchMonthEvents();
-  }, []);
+  //   fetchMonthEvents();
+  // }, []);
 
   // 일정리스트
-  const [events, setEvents] = useState<any[]>([]);
+  // const [events, setEvents] = useState<any[]>([]);
 
-  const handleDateClick = async (date: number) => {
-    setSelectedDate(date);
+  // const handleDateClick = async (date: number) => {
+  //   setSelectedDate(date);
 
-    const yyyy = 2025;
-    const mm = String(11).padStart(2, "0");
-    const dd = String(date).padStart(2, "0");
+  //   const yyyy = 2025;
+  //   const mm = String(11).padStart(2, "0");
+  //   const dd = String(date).padStart(2, "0");
 
-    const res = await api.get(`/api/v1/projects/1/events/day`, {
-      params: {
-        date: `${yyyy}-${mm}-${dd}`,
-      },
-    });
+  //   const res = await api.get(`/api/v1/projects/1/events/day`, {
+  //     params: {
+  //       date: `${yyyy}-${mm}-${dd}`,
+  //     },
+  //   });
 
-    setEvents(res.data);
-  };
+  //   setEvents(res.data);
+  // };
 
   // onClick={() => date && handleDateClick(date)}
 
@@ -106,14 +107,7 @@ function SchedulePage() {
 
   return (
     <ScheduleWrapper>
-      <Con>
-        <HDCon>
-          <Header></Header>
-        </HDCon>
-        <NavCon>
-          <Nav></Nav>
-        </NavCon>
-      </Con>
+      <Title>내일정</Title>
       <ScheduleContainer>
         <Calendar>
           <CalendarDateBox>
@@ -170,7 +164,7 @@ function SchedulePage() {
             <ScheduleDayDate>7일</ScheduleDayDate>
             <ScheduleDWDate>목</ScheduleDWDate>
           </ScheduleDate>
-          {events.length === 0 ? (
+          {/* {events.length === 0 ? (
             <ScheduleDateNone>등록된 일정이 없습니다.</ScheduleDateNone>
           ) : (
             events.map((event) => (
@@ -200,9 +194,9 @@ function SchedulePage() {
                 </SchedulesBox>
               </ViewLink>
             ))
-          )}
+          )} */}
 
-          {/* <ViewLink to="/ViewSchedulePage">
+          <ViewLink to="/ViewSchedulePage">
             <SchedulesBox>
               <Schedules>
                 <Content>
@@ -215,17 +209,12 @@ function SchedulePage() {
                 </ScheduleTime>
               </Schedules>
             </SchedulesBox>
-          </ViewLink> */}
+          </ViewLink>
           {/* 일정 없음 */}
-          {/* <ScheduleDateNone>등록된 일정이 없습니다.</ScheduleDateNone> */}
+          <ScheduleDateNone>등록된 일정이 없습니다.</ScheduleDateNone>
         </ScheduleBox>
       </ScheduleContainer>
-      <ScheduleControlBox>
-        <ScheduleCancell>취소</ScheduleCancell>
-        <Link to="/AddSchedulePage">
-          <ScheduleAdd>추가</ScheduleAdd>
-        </Link>
-      </ScheduleControlBox>
+      <Footer></Footer>
     </ScheduleWrapper>
   );
 }
@@ -369,35 +358,6 @@ const ScheduleDateNone = styled.div`
   color: #b1b1b1;
 `;
 
-//일정 취소 추가
-const ScheduleControlBox = styled.div`
-  display: flex;
-  justify-content: space-between;
-  background-color: #fff;
-  align-items: none;
-  padding: 10px 20px 30px 20px;
-
-  background-color: #fff;
-  box-shadow: 0px -1px 6px rgba(198, 198, 198, 0.6);
-
-  height: 34px;
-  border-radius: 20px 20px 0 0;
-`;
-const ScheduleCancell = styled.button`
-  border: none;
-  background-color: #fff;
-  color: #999999;
-  font-weight: 500;
-  cursor: pointer;
-`;
-const ScheduleAdd = styled.button`
-  border: none;
-  background-color: #fff;
-  color: #4daffe;
-  font-weight: 500;
-  cursor: pointer;
-`;
-
 //점
 const DateNumber = styled.div`
   line-height: 30px;
@@ -415,33 +375,17 @@ const Dot = styled.div`
   background-color: #f4a261; /* 사진 속 주황 */
 `;
 
-const NavCon = styled.div`
-  display: flex;
-  justify-content: center;
-`;
-const HDCon = styled.div`
-  display: flex;
-  justify-content: center;
-`;
-
 const ViewLink = styled(Link)`
   text-decoration: none;
   color: inherit;
   display: block;
 `;
 
-const Con = styled.div`
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  gap: 20px;
-  /* overflow-y: auto; */
-  width: 100%;
-  height: auto;
-  p {
-    margin: 0;
-    font-family: Pretendard;
-  }
+const Title = styled.div`
+  font-size: 20px;
+  font-weight: 600;
+  padding-left: 23px;
+  margin-top: 30px;
 `;
 
-export default SchedulePage;
+export default MySchedulePage;
