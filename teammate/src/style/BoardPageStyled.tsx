@@ -40,6 +40,7 @@ export const deathDayLeft = styled.div`
     display: flex;
     align-items: center;
     gap: 10px;
+    position: relative;
 `
 
 export const dDay = styled.p`

@@ -1,13 +1,14 @@
 import React from 'react'
 import * as B from '../../style/BoardPageStyled';
 import { useNavigate,useParams } from "react-router-dom";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import api from "../../lib/axios";
 
 import leftIcon from '../../img/left.svg';
 import menuIcon from '../../img/ellipsis-vertical.svg'
 import pencilIcon from '../../img/pencilBlack.svg';
 import pinoffIcon from '../../img/pin-off.svg';
+import pinonIcon from '../../img/pinOutLine.svg';
 import trashIconBlack from '../../img/trash-2.svg';
 import pinIcon from '../../img/pin.svg';
 import sendIcon from '../../img/send.svg';
@@ -18,7 +19,8 @@ function BoardDetailPage() {
     const [menuOpen, setMenuOpen] = useState(false);
     const [comment, setComment] = useState("");
     const textareaRef = useRef<HTMLTextAreaElement>(null);
-    const { postId } = useParams();
+    const { projectId, postId } = useParams();
+    const [pinned, setPinned] = useState<boolean>(false);
 
     const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setComment(e.target.value);
@@ -70,6 +72,54 @@ function BoardDetailPage() {
         prev.filter(comment => comment.id !== commentId)
     );
     };
+
+    const handleDeletePost = async () => {
+        if (!postId) return;
+
+        const confirmDelete = window.confirm("게시글을 삭제하시겠습니까?");
+        if (!confirmDelete) return;
+
+        try {
+            await api.delete(`/api/v1/posts/${postId}`);
+            console.log("게시글 삭제 성공");
+
+            // 게시판 목록으로 이동
+            navigate(`/board/${projectId}`);
+            
+        } catch (err) {
+            console.error("게시글 삭제 실패:", err);
+            alert("삭제 권한이 없거나 오류가 발생했습니다.");
+        }
+    };
+
+    const handleTogglePin = async () => {
+    if (!postId) return;
+
+    try {
+        const res = await api.post(`/api/v1/posts/${postId}/pin`);
+        console.log("핀 토글 성공:", res.data);
+
+        // API가 돌려준 pinned 값으로 상태 업데이트
+        setPinned(res.data.pinned);
+
+        // 메뉴 닫기
+        setMenuOpen(false);
+    } catch (err) {
+        console.error("핀 토글 실패:", err);
+        alert("고정 변경에 실패했습니다.");
+    }
+    };
+
+    useEffect(() => {
+    if (!postId) return;
+
+    api.get(`/api/v1/posts/${postId}`)
+        .then(res => {
+        setPinned(res.data.pinned);
+        })
+        .catch(err => console.error("게시글 조회 오류:", err));
+    }, [postId]);
+
     return (
         <B.DetailGroup>
             <B.DetailTop>
@@ -91,11 +141,13 @@ function BoardDetailPage() {
                             <B.DropdownIcon src={pencilIcon}></B.DropdownIcon>
                             <B.DropdownContent>수정하기</B.DropdownContent>
                         </B.DropdownItem>
-                        <B.DropdownItem className='line'>
-                            <B.DropdownIcon src={pinoffIcon}></B.DropdownIcon>
-                            <B.DropdownContent>고정취소</B.DropdownContent>
+                        <B.DropdownItem className='line' onClick={handleTogglePin}>
+                            <B.DropdownIcon src={pinned ? pinoffIcon : pinonIcon} />
+                            <B.DropdownContent>
+                                {pinned ? "고정취소" : "고정하기"}
+                            </B.DropdownContent>
                         </B.DropdownItem>
-                        <B.DropdownItem className='line'>
+                        <B.DropdownItem className='line' onClick={handleDeletePost}>
                             <B.DropdownIcon src={trashIconBlack}></B.DropdownIcon>
                             <B.DropdownContent>삭제하기</B.DropdownContent>
                         </B.DropdownItem>
@@ -105,7 +157,7 @@ function BoardDetailPage() {
                 <B.DetailContent>
                     <B.ContentTop>
                         <B.ContentTitleBox>
-                            <B.PinIcon src={pinIcon}></B.PinIcon>
+                            {pinned && <B.PinIcon src={pinIcon} />}
                             <B.ContentTitle>팀프로젝트 공지</B.ContentTitle>
                         </B.ContentTitleBox>
                     </B.ContentTop>

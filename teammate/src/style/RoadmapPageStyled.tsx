@@ -546,3 +546,130 @@ export const Input = styled.input`
         border: 0;
     }
 `
+
+/* 단계 드롭다운 */
+export const StepWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+`;
+
+export const StepSelectWrapper = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
+export const StepSelect = styled.select`
+  width: 100%;
+  height: 40px;
+  padding: 10px 36px 10px 12px;  /* 오른쪽에 아이콘 들어갈 공간 확보 */
+  border-radius: 6px;
+  border: 1px solid #EEE;
+  background: #FFF;
+
+  font-family: Pretendard;
+  font-size: 14px;
+  font-weight: 500;
+  color: #21272A;
+
+  appearance: none;         /* 기본 화살표 제거 */
+  -webkit-appearance: none; /* 사파리 */
+  -moz-appearance: none;    /* 파이어폭스 */
+
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+    border-color: #4DAFFE;
+  }
+`;
+
+/* 오른쪽 V 아이콘 */
+export const StepArrow = styled.div`
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid #777; /* ▼ 색상 */
+
+  pointer-events: none; /* 클릭 방해 안 하게 */
+`;
+
+
+/* 동업자 드롭다운 */
+export const MemberWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+`;
+
+
+export const MemberSelectBox = styled.div`
+  width: 100%;
+  height: 40px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #EEE;
+  background: #FFF;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  box-sizing: border-box;
+`;
+
+export const MemberPlaceholder = styled.p`
+  color: #999;
+  font-size: 14px;
+  font-weight: 500;
+`;
+
+export const MemberSelectedText = styled.p`
+  color: #21272A;
+  font-size: 14px;
+  font-weight: 600;
+`;
+
+export const MemberDropdown = styled.div`
+  position: absolute;
+  top: 45px;
+  width: 100%;
+  background: #FFF;
+  border: 1px solid #EEE;
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  padding: 8px 0;
+  z-index: 100;
+`;
+
+export const MemberItem = styled.div`
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+
+  &:hover {
+    background: #F3F9FF;
+  }
+`;
+
+export const WriteMemberName = styled.p`
+  font-size: 14px;
+  font-weight: 500;
+`;
+
+export const CheckCircle = styled.div<{ selected: boolean }>`
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid ${({ selected }) => (selected ? "#4DAFFE" : "#CCC")};
+  background: ${({ selected }) => (selected ? "#4DAFFE" : "transparent")};
+`;
