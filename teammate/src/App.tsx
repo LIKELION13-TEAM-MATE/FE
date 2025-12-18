@@ -25,6 +25,8 @@ import ViewSchedulePage from "./components/page/ViewSchedulePage";
 import ListChatroomPage from "./components/page/ListChatroomPage";
 import CreateChatroomPage from "./components/page/CreateChatroomPage";
 import ChatroomPage from "./components/page/ChatroomPage";
+import MySchedulePage from "./components/page/MySchedulePage";
+import MyPage from "./components/page/MyPage";
 
 //페이지 외 요소들은 이 밑으로 정리해주세요.
 
@@ -76,7 +78,8 @@ function App() {
             element={<CreateChatroomPage />}
           ></Route>
           <Route path="/ChatroomPage" element={<ChatroomPage />}></Route>
-          {/* <Route path="/chatrooms/:chatRoomId" element={<ChatroomPage />} /> */}
+          <Route path="/MySchedulePage" element={<MySchedulePage />}></Route>
+          <Route path="/MyPage" element={<MyPage />}></Route>
         </Route>
       </Routes>
     </WebShell>
