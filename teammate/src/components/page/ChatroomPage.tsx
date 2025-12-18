@@ -8,6 +8,7 @@ import PF from "../../assets/Ellipse2.svg";
 import Send from "../../assets/Frame.svg";
 import Plus from "../../assets/Frame20.svg";
 import api from "../../lib/axios";
+import { useLocation } from "react-router-dom";
 
 const chatRoomId = 100; // 실제 채팅방 id
 const senderMemberId = 10;
@@ -15,6 +16,14 @@ const memberId = senderMemberId;
 const roomPassword = "1234"; // 비번 없는 방이면 "" 또는 undefined
 
 function ChatroomPage() {
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+
+  const chatRoomId = Number(params.get("chatRoomId"));
+  const memberId = Number(params.get("memberId")); // 🔹 로그인 붙이면 제거
+  const roomName = params.get("name") ?? "";
+  const memberCount = Number(params.get("memberCount")) || 0;
+
   const [message, setMessage] = useState("");
   interface ApiMessage {
     messageId: number;
@@ -144,10 +153,10 @@ function ChatroomPage() {
             />
           </Link>
           <TiTle>
-            <STitle>멋사 데모데이</STitle>
+            <STitle>{roomName}</STitle>
             <CTitleBox>
               <CTitle>전체 대화방</CTitle>
-              <PeopleN>3</PeopleN>
+              <PeopleN>{memberCount}</PeopleN>
             </CTitleBox>
           </TiTle>
           <CahtMenu>

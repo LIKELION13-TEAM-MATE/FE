@@ -6,8 +6,47 @@ import PF from "../../assets/Ellipse2.svg";
 import { Link } from "react-router-dom";
 import Header from "../layouts/HeaderComponent";
 import Nav from "../layouts/NavComponent";
+import { useLocation } from "react-router-dom";
+
+import { useEffect, useState } from "react";
+import api from "../../lib/axios";
+
+interface Chatroom {
+  chatRoomId: number;
+  name: string;
+  memberCount: number;
+  lastMessage: string;
+  lastDisplayTime: string;
+}
 
 function ListChatroomPage() {
+  const [chatrooms, setChatrooms] = useState<Chatroom[]>([]);
+
+  // const location = useLocation();
+  // const params = new URLSearchParams(location.search);
+
+  // const chatRoomId = Number(params.get("chatRoomId"));
+  // const memberId = Number(params.get("memberId"));
+
+  const projectId = 1;
+  const memberId = 10; // 🔹 로그인 붙이면 제거
+  // const memberId = user.id;
+
+  useEffect(() => {
+    const fetchChatrooms = async () => {
+      try {
+        const res = await api.get(`/api/v1/projects/${projectId}/chatrooms`, {
+          params: { memberId },
+        });
+        setChatrooms(res.data);
+      } catch (e) {
+        console.error("채팅방 목록 조회 실패", e);
+      }
+    };
+
+    fetchChatrooms();
+  }, []);
+
   return (
     <ListChatroomWrapper>
       <Header></Header>
@@ -34,7 +73,32 @@ function ListChatroomPage() {
         </PlusCR>
       </SearchCBox>
       <ChatroomListConT>
-        <ChatroomLink to="/ChatroomPage">
+        {chatrooms.map((room) => (
+          <ChatroomLink
+            key={room.chatRoomId}
+            to={`/ChatroomPage?chatRoomId=${room.chatRoomId}&memberId=10`}
+          >
+            <ChatroomListBox>
+              <MemberPF>
+                <img src={PF} alt="PF" />
+              </MemberPF>
+
+              <ChatroomDT>
+                <TNBox>
+                  <ChatroomTitle>{room.name}</ChatroomTitle>
+                  <ChatroomMemberN>{room.memberCount}</ChatroomMemberN>
+                </TNBox>
+
+                <ChatroomCom>
+                  {room.lastMessage ?? "메시지가 없습니다"}
+                </ChatroomCom>
+              </ChatroomDT>
+
+              <ChatroomTime>{room.lastDisplayTime}</ChatroomTime>
+            </ChatroomListBox>
+          </ChatroomLink>
+        ))}
+        {/* <ChatroomLink to="/ChatroomPage">
           <ChatroomListBox>
             <MemberPF>
               <img src={PF} alt="PF" />
@@ -64,13 +128,25 @@ function ListChatroomPage() {
             </ChatroomDT>
             <ChatroomTime>오전 10:11</ChatroomTime>
           </ChatroomListBox>
-        </ChatroomLink>
+        </ChatroomLink> */}
       </ChatroomListConT>
     </ListChatroomWrapper>
   );
 }
 
-const ListChatroomWrapper = styled.div``;
+const ListChatroomWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+  /* overflow-y: auto; */
+  width: 100%;
+  height: auto;
+  p {
+    margin: 0;
+    font-family: Pretendard;
+  }
+`;
 
 // 검색
 const SearchCBox = styled.div`

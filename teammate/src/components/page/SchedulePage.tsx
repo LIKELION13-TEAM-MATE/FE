@@ -3,6 +3,7 @@ import styled from "styled-components";
 import DownCaret from "../../assets/Vector.svg";
 import Header from "../layouts/HeaderComponent";
 import Nav from "../layouts/NavComponent";
+import { Link } from "react-router-dom";
 
 function SchedulePage() {
   //날짜 선택 관리
@@ -58,12 +59,14 @@ function SchedulePage() {
 
   return (
     <ScheduleWrapper>
-      <HDCon>
-        <Header></Header>
-      </HDCon>
-      <NavCon>
-        <Nav></Nav>
-      </NavCon>
+      <Con>
+        <HDCon>
+          <Header></Header>
+        </HDCon>
+        <NavCon>
+          <Nav></Nav>
+        </NavCon>
+      </Con>
       <ScheduleContainer>
         <Calendar>
           <CalendarDateBox>
@@ -120,37 +123,43 @@ function SchedulePage() {
             <ScheduleDayDate>7일</ScheduleDayDate>
             <ScheduleDWDate>목</ScheduleDWDate>
           </ScheduleDate>
-          <SchedulesBox>
-            <Schedules>
-              <Content>
-                <ContentTitle>정규회의</ContentTitle>
-                <ContentWith>김채연 with 홍길동, 홍길순</ContentWith>
-              </Content>
-              <ScheduleTime>
-                <TimeStart>10:00 AM</TimeStart>
-                <TimeFinish>~ 18:00 PM</TimeFinish>
-              </ScheduleTime>
-            </Schedules>
-          </SchedulesBox>
-          <SchedulesBox>
-            <Schedules>
-              <Content>
-                <ContentTitle>정규회의</ContentTitle>
-                <ContentWith>김채연 with 홍길동, 홍길순</ContentWith>
-              </Content>
-              <ScheduleTime>
-                <TimeStart>10:00 AM</TimeStart>
-                <TimeFinish>~ 18:00 PM</TimeFinish>
-              </ScheduleTime>
-            </Schedules>
-          </SchedulesBox>
+          <ViewLink to="/ViewSchedulePage">
+            <SchedulesBox>
+              <Schedules>
+                <Content>
+                  <ContentTitle>정규회의</ContentTitle>
+                  <ContentWith>김채연 with 홍길동, 홍길순</ContentWith>
+                </Content>
+                <ScheduleTime>
+                  <TimeStart>10:00 AM</TimeStart>
+                  <TimeFinish>~ 18:00 PM</TimeFinish>
+                </ScheduleTime>
+              </Schedules>
+            </SchedulesBox>
+          </ViewLink>
+          <ViewLink to="/ViewSchedulePage">
+            <SchedulesBox>
+              <Schedules>
+                <Content>
+                  <ContentTitle>정규회의</ContentTitle>
+                  <ContentWith>김채연 with 홍길동, 홍길순</ContentWith>
+                </Content>
+                <ScheduleTime>
+                  <TimeStart>10:00 AM</TimeStart>
+                  <TimeFinish>~ 18:00 PM</TimeFinish>
+                </ScheduleTime>
+              </Schedules>
+            </SchedulesBox>
+          </ViewLink>
           {/* 일정 없음 */}
           <ScheduleDateNone>등록된 일정이 없습니다.</ScheduleDateNone>
         </ScheduleBox>
       </ScheduleContainer>
       <ScheduleControlBox>
         <ScheduleCancell>취소</ScheduleCancell>
-        <ScheduleAdd>추가</ScheduleAdd>
+        <Link to="/AddSchedulePage">
+          <ScheduleAdd>추가</ScheduleAdd>
+        </Link>
       </ScheduleControlBox>
     </ScheduleWrapper>
   );
@@ -162,8 +171,7 @@ const ScheduleWrapper = styled.div`
 `;
 
 const ScheduleContainer = styled.div`
-  min-height: 90vh;
-  /* background-color: #ffd7d7; */
+  min-height: 70vh;
   padding: 23px;
   position: relative;
 `;
@@ -349,6 +357,26 @@ const NavCon = styled.div`
 const HDCon = styled.div`
   display: flex;
   justify-content: center;
+`;
+
+const ViewLink = styled(Link)`
+  text-decoration: none;
+  color: inherit;
+  display: block;
+`;
+
+const Con = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+  /* overflow-y: auto; */
+  width: 100%;
+  height: auto;
+  p {
+    margin: 0;
+    font-family: Pretendard;
+  }
 `;
 
 export default SchedulePage;

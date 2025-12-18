@@ -1,26 +1,35 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import Plugin from "../../assets/Plugin.svg"
-import fPlugin from "../../assets/fPlugin.svg"
+import Header from "../layouts/HeaderComponent";
+import Nav from "../layouts/NavComponent";
+import { Link } from "react-router-dom";
 
-function ViewSchedulePage () {
+function ViewSchedulePage() {
+  // 글씨 색 변경
+  const [repeat, setRepeat] = useState("안함");
+  const [alarm, setAlarm] = useState("안함");
+  const [worker, setWorker] = useState("없음");
 
-// 글씨 색 변경
-const [repeat, setRepeat] = useState("안함");
-const [alarm, setAlarm] = useState("안함");
-const [worker, setWorker] = useState("없음");
+  // 하루종일
+  const [isAllDay, setIsAllDay] = useState(false);
 
-// 하루종일
-const [isAllDay, setIsAllDay] = useState(false);
-
-
-  return(
+  return (
     <ViewScheduleWrapper>
+      <HDCon>
+        <Header></Header>
+      </HDCon>
+      <NavCon>
+        <Nav></Nav>
+      </NavCon>
       {/* 공동 헤더 컴포넌트 추가 */}
-            <ScheduleControlBox>
-              <ScheduleControl>
-        <ScheduleCancell>취소</ScheduleCancell>
-        <ScheduleAdd type="submit">추가</ScheduleAdd>
+      <ScheduleControlBox>
+        <ScheduleControl>
+          <Link to="/SchedulePage">
+            <ScheduleCancell>취소</ScheduleCancell>
+          </Link>
+          <Link to="/AddSchedulePage">
+            <ScheduleAdd type="submit">편집</ScheduleAdd>
+          </Link>
         </ScheduleControl>
         <AddBox>
           <AddTitleBox>
@@ -35,44 +44,56 @@ const [isAllDay, setIsAllDay] = useState(false);
           <SetRepeat>
             <SetReTxt>반복</SetReTxt>
             <SetReBox>
-            <SetRe value={repeat} onChange={(e) => setRepeat(e.target.value)} selected={repeat !== "안함"}> 
-              <option>안함</option>
-              <option>매일</option>
-              <option>매주</option>
-              <option>2주마다</option>
-              <option>매월</option>
-              <option>매년</option>
-          </SetRe>
-            {/* <Repeat><img src={outline} alt="outline" style={{ width:'18px', height:'18px', marginTop:'3px'  }}/></Repeat> */}
+              <SetRe
+                value={repeat}
+                onChange={(e) => setRepeat(e.target.value)}
+                selected={repeat !== "안함"}
+              >
+                <option>안함</option>
+                <option>매일</option>
+                <option>매주</option>
+                <option>2주마다</option>
+                <option>매월</option>
+                <option>매년</option>
+              </SetRe>
+              {/* <Repeat><img src={outline} alt="outline" style={{ width:'18px', height:'18px', marginTop:'3px'  }}/></Repeat> */}
             </SetReBox>
           </SetRepeat>
 
           <SetAlarm>
             <SetAlTxt>알림</SetAlTxt>
             <SetAlBox>
-            <SetAl value={alarm} onChange={(e) => setAlarm(e.target.value)} selected={alarm !== "안함"}>
-              <option>안함</option>
-              <option>매일</option>
-              <option>매주</option>
-              <option>2주마다</option>
-              <option>매월</option>
-              <option>매년</option>
+              <SetAl
+                value={alarm}
+                onChange={(e) => setAlarm(e.target.value)}
+                selected={alarm !== "안함"}
+              >
+                <option>안함</option>
+                <option>매일</option>
+                <option>매주</option>
+                <option>2주마다</option>
+                <option>매월</option>
+                <option>매년</option>
               </SetAl>
-            {/* <Alarm><img src={outline} alt="outline" style={{ width:'18px', height:'18px', marginTop:'3px' }}/></Alarm> */}
+              {/* <Alarm><img src={outline} alt="outline" style={{ width:'18px', height:'18px', marginTop:'3px' }}/></Alarm> */}
             </SetAlBox>
           </SetAlarm>
 
           <SetWorker>
             <SetWoTxt>동업자</SetWoTxt>
             <SetWoBox>
-            <SetWo value={worker} onChange={(e) => setWorker(e.target.value)} selected={worker !== "없음"}>
-              <option>없음</option>
-              <option>김채연</option>
-              <option>홍길동</option>
-              <option>홍길순</option>
-              <option>모두</option>
-            </SetWo>
-            {/* <Worker><img src={Stroke} alt="Stroke" style={{ width:'10px', height:'10px', marginLeft:'4px', marginTop:'7px' }}/></Worker> */}
+              <SetWo
+                value={worker}
+                onChange={(e) => setWorker(e.target.value)}
+                selected={worker !== "없음"}
+              >
+                <option>없음</option>
+                <option>김채연</option>
+                <option>홍길동</option>
+                <option>홍길순</option>
+                <option>모두</option>
+              </SetWo>
+              {/* <Worker><img src={Stroke} alt="Stroke" style={{ width:'10px', height:'10px', marginLeft:'4px', marginTop:'7px' }}/></Worker> */}
             </SetWoBox>
             <SetCoWo>홍길동</SetCoWo>
           </SetWorker>
@@ -80,53 +101,64 @@ const [isAllDay, setIsAllDay] = useState(false);
           <SetMemo>
             <Memo>줌 비밀번호 1234</Memo>
           </SetMemo>
-
         </AddBoxContent>
       </ScheduleControlBox>
     </ViewScheduleWrapper>
-  )
+  );
 }
 
 const ViewScheduleWrapper = styled.div`
   width: 100%;
   align-items: stretch;
-  `;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+  /* overflow-y: auto; */
+  width: 100%;
+  height: auto;
+  p {
+    margin: 0;
+    font-family: Pretendard;
+  }
+`;
 
-  const ScheduleControl = styled.div`
-    display: flex;
-    justify-content: space-between;
-    padding-bottom: 25px;
-  `;
+const ScheduleControl = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 25px;
+`;
 
 //일정 취소 추가
 const ScheduleControlBox = styled.form`
   background-color: #fff;
-  padding:10px 20px 30px 20px;
+  padding: 10px 20px 30px 20px;
 
   background-color: #fff;
   box-shadow: 0px -1px 6px rgba(198, 198, 198, 0.6);
 
-  height: auto;
+  /* height: auto; */
+  min-height: 60vh;
   border-radius: 20px 20px 0 0;
-
 
   position: fixed;
   bottom: 0;
   width: 353px;
 `;
 const ScheduleCancell = styled.button`
-border:none;
-background-color:#fff;
-color: #999999;
-font-weight: 500;
-cursor: pointer;
+  border: none;
+  background-color: #fff;
+  color: #999999;
+  font-weight: 500;
+  cursor: pointer;
 `;
 const ScheduleAdd = styled.button`
-border:none;
-background-color:#fff;
-color: #4DAFFE;
-font-weight: 500;
-cursor: pointer;`;
+  border: none;
+  background-color: #fff;
+  color: #4daffe;
+  font-weight: 500;
+  cursor: pointer;
+`;
 
 //일정 생성
 const AddBox = styled.div`
@@ -135,7 +167,7 @@ const AddBox = styled.div`
 
 //제목
 const AddTitleBox = styled.div`
- position: relative;
+  position: relative;
   padding-left: 12px;
 
   &::before {
@@ -149,14 +181,14 @@ const AddTitleBox = styled.div`
     height: 30px;
     border-radius: 4px;
 
-    background-color: #FFA565;
-  }`;
+    background-color: #ffa565;
+  }
+`;
 
-const TitleTxt = styled.div`  
+const TitleTxt = styled.div`
   font-size: 25px;
   font-weight: 550;
 `;
-
 
 // //체크박스
 // const CheckBox = styled.input.attrs({ type: "checkbox" })`
@@ -171,8 +203,7 @@ const TitleTxt = styled.div`
 // `;
 
 //날짜, 시간 설정 박스
-const AddBoxContent = styled.div`
-`;
+const AddBoxContent = styled.div``;
 
 // const SetDate = styled.div`
 //   margin-top: 10px;
@@ -259,7 +290,7 @@ const AddBoxContent = styled.div`
 // 반복
 const SetRepeat = styled.div`
   margin-top: 18px;
-  border: 1px solid #dbdbdb ;
+  border: 1px solid #dbdbdb;
   border-radius: 15px;
   padding: 10px;
   font-size: 14px;
@@ -267,11 +298,10 @@ const SetRepeat = styled.div`
   justify-content: space-between;
   align-items: center;
 `;
-const SetReTxt = styled.div`
-`;
+const SetReTxt = styled.div``;
 const SetReBox = styled.div`
   display: flex;
-  gap:5px;
+  gap: 5px;
   margin-right: 10px;
   align-items: center;
 `;
@@ -284,11 +314,10 @@ const SetRe = styled.select<{ selected: boolean }>`
 //   cursor: pointer;
 // `;
 
-
 // 알림
 const SetAlarm = styled.div`
   margin-top: 18px;
-  border: 1px solid #dbdbdb ;
+  border: 1px solid #dbdbdb;
   border-radius: 15px;
   padding: 10px;
   font-size: 14px;
@@ -299,7 +328,7 @@ const SetAlarm = styled.div`
 const SetAlTxt = styled.div``;
 const SetAlBox = styled.div`
   display: flex;
-  gap:5px;
+  gap: 5px;
   margin-right: 10px;
   align-items: center;
 `;
@@ -315,7 +344,7 @@ const SetAl = styled.select<{ selected: boolean }>`
 // 동업자
 const SetWorker = styled.div`
   margin-top: 18px;
-  border: 1px solid #dbdbdb ;
+  border: 1px solid #dbdbdb;
   border-radius: 15px;
   padding: 10px;
   font-size: 14px;
@@ -331,7 +360,7 @@ const SetCoWo = styled.div`
 `;
 const SetWoBox = styled.div`
   display: flex;
-  gap:5px;
+  gap: 5px;
   margin-right: 10px;
   align-items: center;
 `;
@@ -347,36 +376,42 @@ const SetWo = styled.select<{ selected: boolean }>`
 // 메모
 const SetMemo = styled.div`
   margin-top: 18px;
-  border: 1px solid #dbdbdb ;
+  border: 1px solid #dbdbdb;
   border-radius: 15px;
   padding: 10px;
   font-size: 14px;
   justify-content: space-between;
   align-items: center;
   display: flex;
-  `;
+`;
 
 const Memo = styled.div`
-  resize: none;  
+  resize: none;
   outline: none;
   width: 100%;
   height: 80px;
   box-sizing: border-box;
-  font-family:none ;
+  font-family: none;
   border: none;
 `;
 
 // 날짜시간 보기
 const ViewContent = styled.div`
-color: #999999;
-font-size: 13px;
-padding-top: 10px;
-padding-left: 8px;
+  color: #999999;
+  font-size: 13px;
+  padding-top: 10px;
+  padding-left: 8px;
 `;
-const ViewDay = styled.div`
+const ViewDay = styled.div``;
+const ViewTime = styled.div``;
 
-`;const ViewTime = styled.div`
-
+const NavCon = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+const HDCon = styled.div`
+  display: flex;
+  justify-content: center;
 `;
 
 export default ViewSchedulePage;

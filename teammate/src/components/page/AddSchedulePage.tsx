@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Plugin from "../../assets/Plugin.svg";
 import fPlugin from "../../assets/fPlugin.svg";
+import Header from "../layouts/HeaderComponent";
+import Nav from "../layouts/NavComponent";
+import { Link } from "react-router-dom";
 
 function AddSchedulePage() {
   const [title, setTitle] = useState("");
@@ -36,11 +39,21 @@ function AddSchedulePage() {
 
   return (
     <AddScheduleWrapper>
+      <HDCon>
+        <Header></Header>
+      </HDCon>
+      <NavCon>
+        <Nav></Nav>
+      </NavCon>
       {/* 공동 헤더 컴포넌트 추가 */}
       <ScheduleControlBox onSubmit={handleSubmit}>
         <ScheduleControl>
-          <ScheduleCancell>취소</ScheduleCancell>
-          <ScheduleAdd type="submit">추가</ScheduleAdd>
+          <Link to="/SchedulePage">
+            <ScheduleCancell>취소</ScheduleCancell>
+          </Link>
+          <Link to="/SchedulePage">
+            <ScheduleAdd type="submit">추가</ScheduleAdd>
+          </Link>
         </ScheduleControl>
         <AddBox>
           <AddTitleBox>
@@ -185,6 +198,17 @@ function AddSchedulePage() {
 const AddScheduleWrapper = styled.div`
   width: 100%;
   align-items: stretch;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+  /* overflow-y: auto; */
+  width: 100%;
+  height: auto;
+  p {
+    margin: 0;
+    font-family: Pretendard;
+  }
 `;
 
 const ScheduleControl = styled.div`
@@ -475,6 +499,15 @@ const Memo = styled.textarea`
     color: #d4d4d4;
     font-size: 14px;
   }
+`;
+
+const NavCon = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+const HDCon = styled.div`
+  display: flex;
+  justify-content: center;
 `;
 
 export default AddSchedulePage;

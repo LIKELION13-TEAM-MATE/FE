@@ -5,6 +5,7 @@ import Header from "../layouts/HeaderComponent";
 import Nav from "../layouts/NavComponent";
 import api from "../../lib/axios";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const PEOPLE_LIST = [
   { id: 2, name: "홍길동" },
@@ -104,7 +105,9 @@ function CreateChatroomPage() {
         </CreateElementForm>
         <SelectBoxCt>
           <SelectBox>
-            <DelBtn type="button">취소</DelBtn>
+            <Link to="/ListChatroomPage">
+              <DelBtn type="button">취소</DelBtn>
+            </Link>
             <CreateBtn type="button" onClick={createChatRoom}>
               생성
             </CreateBtn>
@@ -115,7 +118,19 @@ function CreateChatroomPage() {
   );
 }
 
-const CreateChatroomWrapper = styled.div``;
+const CreateChatroomWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+  /* overflow-y: auto; */
+  width: 100%;
+  height: auto;
+  p {
+    margin: 0;
+    font-family: Pretendard;
+  }
+`;
 
 const CreateContainer = styled.div`
   margin-top: 30px;
