@@ -1,29 +1,69 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Stroke from "../../assets/Stroke.svg";
+import Header from "../layouts/HeaderComponent";
+import Nav from "../layouts/NavComponent";
+import api from "../../lib/axios";
+import { useNavigate } from "react-router-dom";
 
-const PEOPLE_LIST = ["홍길동", "홍길순", "김철수"];
+const PEOPLE_LIST = [
+  { id: 2, name: "홍길동" },
+  { id: 3, name: "홍길순" },
+  { id: 7, name: "김철수" },
+];
 
 function CreateChatroomPage() {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedPeople, setSelectedPeople] = useState<string[]>([]);
 
-  const togglePerson = (person: string) => {
+  const navigate = useNavigate();
+
+  const [selectedPeople, setSelectedPeople] = useState<number[]>([]);
+  const [roomName, setRoomName] = useState("");
+  const [password, setPassword] = useState("");
+
+  const togglePerson = (id: number) => {
     setSelectedPeople((prev) =>
-      prev.includes(person)
-        ? prev.filter((p) => p !== person)
-        : [...prev, person]
+      prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id]
     );
   };
+
+  const createChatRoom = async () => {
+    try {
+      await api.post(
+        `/api/v1/projects/1/chatrooms`,
+        {
+          name: roomName,
+          inviteMemberIds: selectedPeople,
+          password,
+        },
+        {
+          params: {
+            creatorMemberId: 10,
+          },
+        }
+      );
+
+      alert("채팅방 생성 완료");
+      navigate("/ListChatroomPage");
+    } catch (error) {
+      console.error(error);
+      alert("채팅방 생성 실패");
+    }
+  };
+
   return (
     <CreateChatroomWrapper>
+      <Header></Header>
+      <Nav></Nav>
       <CreateContainer>
         <CreateElementForm>
           <CreatePeopleBox>
             <PeopleTxt> 대화상대 선택</PeopleTxt>
             <PeopleSelectBox onClick={() => setIsOpen(!isOpen)}>
               {selectedPeople.length > 0
-                ? selectedPeople.join(", ")
+                ? PEOPLE_LIST.filter((p) => selectedPeople.includes(p.id))
+                    .map((p) => p.name)
+                    .join(", ")
                 : "대화상대를 선택하세요"}
               <Arrow>
                 <img src={Stroke} alt="Stoke" />
@@ -33,13 +73,13 @@ function CreateChatroomPage() {
             {isOpen && (
               <Dropdown>
                 {PEOPLE_LIST.map((person) => (
-                  <DropdownItem key={person}>
+                  <DropdownItem key={person.id}>
                     <input
                       type="checkbox"
-                      checked={selectedPeople.includes(person)}
-                      onChange={() => togglePerson(person)}
+                      checked={selectedPeople.includes(person.id)}
+                      onChange={() => togglePerson(person.id)}
                     />
-                    <span>{person}</span>
+                    <span>{person.name}</span>
                   </DropdownItem>
                 ))}
               </Dropdown>
@@ -47,17 +87,27 @@ function CreateChatroomPage() {
           </CreatePeopleBox>
           <CreateTitleBox>
             <CreateTiTxt> 대화방 이름</CreateTiTxt>
-            <CreateTitle type="text"></CreateTitle>
+            <CreateTitle
+              value={roomName}
+              onChange={(e) => setRoomName(e.target.value)}
+              type="text"
+            ></CreateTitle>
           </CreateTitleBox>
           <CreatePasBox>
             <CreatePasTxt> 비밀번호</CreatePasTxt>
-            <CreatePassword type="password"></CreatePassword>
+            <CreatePassword
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            ></CreatePassword>
           </CreatePasBox>
         </CreateElementForm>
         <SelectBoxCt>
           <SelectBox>
             <DelBtn type="button">취소</DelBtn>
-            <CreateBtn type="button">생성</CreateBtn>
+            <CreateBtn type="button" onClick={createChatRoom}>
+              생성
+            </CreateBtn>
           </SelectBox>
         </SelectBoxCt>
       </CreateContainer>
@@ -71,7 +121,6 @@ const CreateContainer = styled.div`
   margin-top: 30px;
   width: 295px;
   height: 500px;
-  min-height: 80vh;
   border-radius: 20px;
   background-color: #ffffff;
   box-shadow: 0px 1px 6px rgba(198, 198, 198, 0.8);

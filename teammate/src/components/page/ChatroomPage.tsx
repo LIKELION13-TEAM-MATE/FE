@@ -7,30 +7,98 @@ import { Link } from "react-router-dom";
 import PF from "../../assets/Ellipse2.svg";
 import Send from "../../assets/Frame.svg";
 import Plus from "../../assets/Frame20.svg";
+import api from "../../lib/axios";
+
+const chatRoomId = 100; // 실제 채팅방 id
+const senderMemberId = 10;
+const memberId = senderMemberId;
+const roomPassword = "1234"; // 비번 없는 방이면 "" 또는 undefined
 
 function ChatroomPage() {
   const [message, setMessage] = useState("");
-  interface Message {
-    text: string;
-    time: string;
+  interface ApiMessage {
+    messageId: number;
+    senderId: number;
+    senderNickname: string;
+    content: string;
+    createdAt: string;
   }
 
-  const [messages, setMessages] = useState<Message[]>([]);
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const res = await api.get(`/api/v1/chatrooms/${chatRoomId}/messages`, {
+          params: {
+            memberId: senderMemberId,
+            roomPassword,
+          },
+        });
+
+        // 서버 메시지를 기존 Message 타입으로 변환
+        const converted = res.data.map((msg: any) => ({
+          text: msg.content,
+          time: formatTime(msg.createdAt),
+        }));
+
+        setMessages(res.data);
+      } catch (e) {
+        console.error("메시지 조회 실패", e);
+      }
+    };
+
+    fetchMessages();
+  }, []);
+
+  const [messages, setMessages] = useState<ApiMessage[]>([]);
 
   // 전송함수
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim() === "") return;
+    if (!message.trim()) return;
 
-    setMessages((prev) => [
-      ...prev,
-      {
-        text: message,
-        time: getCurrentTime(),
-      },
-    ]);
+    try {
+      await api.post(
+        `/api/v1/chatrooms/${chatRoomId}/messages`,
+        {
+          content: message,
+          roomPassword,
+        },
+        {
+          params: {
+            senderMemberId,
+          },
+        }
+      );
 
-    setMessage("");
+      // 전송 성공 시 화면에 바로 추가
+      // setMessages((prev) => [
+      //   ...prev,
+      //   {
+      //     text: message,
+      //     time: getCurrentTime(),
+      //   },
+      // ]);
+
+      // 서버 기준으로 다시 조회 (정합성 맞추기)
+      const res = await api.get(`/api/v1/chatrooms/${chatRoomId}/messages`, {
+        params: {
+          memberId: senderMemberId,
+          roomPassword,
+        },
+      });
+
+      const converted = res.data.map((msg: any) => ({
+        text: msg.content,
+        time: formatTime(msg.createdAt),
+      }));
+
+      setMessages(converted);
+
+      setMessage("");
+    } catch (error) {
+      console.error("메시지 전송 실패", error);
+      alert("메시지 전송 실패");
+    }
   };
 
   //하단 스크롤
@@ -44,6 +112,18 @@ function ChatroomPage() {
     const now = new Date();
     let hours = now.getHours();
     const minutes = now.getMinutes();
+    const ampm = hours < 12 ? "오전" : "오후";
+
+    hours = hours % 12;
+    hours = hours === 0 ? 12 : hours;
+
+    return `${ampm} ${hours}:${minutes.toString().padStart(2, "0")}`;
+  };
+
+  const formatTime = (createdAt: string) => {
+    const date = new Date(createdAt);
+    let hours = date.getHours();
+    const minutes = date.getMinutes();
     const ampm = hours < 12 ? "오전" : "오후";
 
     hours = hours % 12;
@@ -80,16 +160,35 @@ function ChatroomPage() {
         </ChatroomHeader>
         <ChatroomBody>
           <ChatDay>2025년 12월 12일</ChatDay>
-          <MyChatBox>
+          {messages.map((msg) =>
+            msg.senderId === memberId ? (
+              // 내 메시지
+              <MyChatBox key={msg.messageId}>
+                <ChatTime>{formatTime(msg.createdAt)}</ChatTime>
+                <MyChat>{msg.content}</MyChat>
+              </MyChatBox>
+            ) : (
+              // 상대 메시지
+              <OtherChatBox key={msg.messageId}>
+                <OtherPF>
+                  <img
+                    src={PF}
+                    alt="PF"
+                    style={{ width: "27px", height: "27px" }}
+                  />
+                </OtherPF>
+                <ChatBoxTime>
+                  <OtherCaht>{msg.content}</OtherCaht>
+                  <ChatTime>{formatTime(msg.createdAt)}</ChatTime>
+                </ChatBoxTime>
+              </OtherChatBox>
+            )
+          )}
+          {/* <MyChatBox>
             <ChatTime>오전 9:30</ChatTime>
             <MyChat>오늘은 기획 단계 마무리합시다!</MyChat>
           </MyChatBox>
-          {/* {messages.map((msg, idx) => (
-            <MyChatBox key={idx}>
-              <ChatTime>방금</ChatTime>
-              <MyChat>{msg}</MyChat>
-            </MyChatBox>
-          ))} */}
+
           <OtherChatBox>
             <OtherPF>
               <img
@@ -104,13 +203,13 @@ function ChatroomPage() {
               </OtherCaht>
               <ChatTime>오전 9:30</ChatTime>
             </ChatBoxTime>
-          </OtherChatBox>
-          {messages.map((msg, idx) => (
+          </OtherChatBox> */}
+          {/* {messages.map((msg, idx) => (
             <MyChatBox key={idx}>
               <ChatTime>{msg.time}</ChatTime>
               <MyChat>{msg.text}</MyChat>
             </MyChatBox>
-          ))}
+          ))} */}
           <div ref={bottomRef} />
         </ChatroomBody>
         <ChatroomFooter as="form" onSubmit={handleSubmit}>
@@ -193,8 +292,8 @@ const CTitle = styled.div`
 // 채팅
 const ChatroomBody = styled.div`
   padding: 10px 23px 23px 23px;
-  flex: 1; /* ⭐ 남은 영역 전부 차지 */
-  padding: 10px 23px 120px; /* ⭐ footer 높이만큼 bottom 여백 */
+  flex: 1;
+  padding: 10px 23px 120px;
   overflow-y: auto;
 `;
 const ChatDay = styled.div`
@@ -258,7 +357,7 @@ const ChatroomFooter = styled.div`
   background-color: #ffff;
   height: 100px;
   padding-bottom: 10px;
-  position: fixed;
+  /* position: fixed; */
   bottom: 0;
   width: 393px;
 `;

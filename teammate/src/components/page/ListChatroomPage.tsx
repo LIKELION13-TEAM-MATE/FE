@@ -4,11 +4,14 @@ import search from "../../assets/search.svg";
 import circle from "../../assets/message-circle-plus.svg";
 import PF from "../../assets/Ellipse2.svg";
 import { Link } from "react-router-dom";
+import Header from "../layouts/HeaderComponent";
+import Nav from "../layouts/NavComponent";
 
 function ListChatroomPage() {
   return (
     <ListChatroomWrapper>
-      {/* 공동컴포넌트 추가 */}
+      <Header></Header>
+      <Nav></Nav>
       <SearchCBox>
         <SearchCR>
           <SearchInput type="text" placeholder="검색어를 입력하세요." />

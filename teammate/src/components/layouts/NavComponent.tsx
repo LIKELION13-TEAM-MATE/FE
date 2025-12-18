@@ -8,16 +8,16 @@ function NavComponent() {
       <StyledLink to="/board">
         <NavBtn>게시판</NavBtn>
       </StyledLink>
-      <StyledLink to="/roles">
+      <StyledLink to="/RolePage">
         <NavBtn>역할</NavBtn>
       </StyledLink>
-      <StyledLink to="/schedule">
+      <StyledLink to="/SchedulePage">
         <NavBtn>일정</NavBtn>
       </StyledLink>
       <StyledLink to="/roadmap">
         <NavBtn>로드맵</NavBtn>
       </StyledLink>
-      <StyledLink to="/chat">
+      <StyledLink to="/ListChatroomPage">
         <NavBtn>대화방</NavBtn>
       </StyledLink>
     </NavWrapper>
@@ -26,7 +26,7 @@ function NavComponent() {
 
 export default NavComponent;
 
-//Styled Components 
+//Styled Components
 
 const NavWrapper = styled.div`
   width: 345px;
