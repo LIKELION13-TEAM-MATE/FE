@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom";
 function NavComponent() {
   return (
     <NavWrapper>
-      <StyledLink to="/board">
+      <StyledLink to="/board/:id">
         <NavBtn>게시판</NavBtn>
       </StyledLink>
       <StyledLink to="/RolePage">

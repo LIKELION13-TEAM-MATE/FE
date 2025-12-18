@@ -7,7 +7,7 @@ export const container = styled.div`
     flex-direction: column;
     gap: 40px;
     overflow-y: auto;
-    margin-bottom: 40px;
+    margin-bottom: 121px;
     p{
         margin: 0;
         font-family: Pretendard;

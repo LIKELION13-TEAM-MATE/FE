@@ -2,6 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import * as M from '../../style/MainPageStyled';
 
+import TapBar from "../layouts/TapBarComponent";
+
 import alarmIcon from "../../img/alarm.svg";
 import plusIcon from "../../img/AddNew.svg";
 import sideIcon from "../../img/right.svg";
@@ -42,7 +44,7 @@ function MainPage() {
                     <M.ingProjectColor color="#E6D4FF"></M.ingProjectColor>
                 </M.ingProjectDdayBox>
             </M.ingProjectBox>
-            <M.ingProjectBox onClick={() => navigate("/board")}>
+            <M.ingProjectBox onClick={() => navigate("/board/1")}>
                 <M.ingProjectContent>멋사 데모데이</M.ingProjectContent>
                 <M.ingProjectDdayBox>
                     <M.ingProjectDday dday={16} >D-16</M.ingProjectDday>
@@ -137,6 +139,7 @@ function MainPage() {
             </M.toDo>
         </M.myScheduleContent>
       </M.mySchedule>
+      <TapBar/>
     </M.container>
   );
 }

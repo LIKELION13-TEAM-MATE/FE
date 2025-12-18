@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom"; 
+import api from '../../lib/axios';
 
 import styled from 'styled-components'
 
@@ -8,13 +9,15 @@ import logo from '../../img/Logo.svg'
 function SignupPage() {
     const navigate = useNavigate();
     const [password, setPassword] = useState("");
-    const [passwordCheck, setPasswordCheck] = useState("");
+    const [passwordConfirm, setPasswordConfirm] = useState("");
+    const [username, setUsername] = useState("");
+    const [nickname, setNickname] = useState("");
 
     // 에러 상태
     const [passwordError, setPasswordError] = useState("");
     const [passwordCheckError, setPasswordCheckError] = useState("");
 
-    const handleSubmit = () => {
+    const handleSubmit = async() => {
         let valid = true;
         // 비밀번호 검사
         if (password.length < 8) {
@@ -22,11 +25,23 @@ function SignupPage() {
             valid = false;
         }
         // 비밀번호 확인
-        if (password !== passwordCheck) {
+        if (password !== passwordConfirm) {
             setPasswordCheckError("비밀번호가 일치하지 않습니다.");
             valid = false;
         }
         if (!valid) return;
+        try {
+            await api.post("api/v1/members/signup", {
+            username,
+            nickname,
+            password,
+            passwordConfirm,
+            });
+
+            navigate("/login");
+        } catch (err) {
+            console.log(err);
+        }
         };
   return (
     <Container>
@@ -37,13 +52,14 @@ function SignupPage() {
         <Body>
             <Input>
                 <InputTitle>아이디</InputTitle>
-                <InputBox placeholder="아이디를 입력하세요" type="text"></InputBox>
+                <InputBox placeholder="아이디를 입력하세요" type="text" value={username} onChange={(e) => setUsername(e.target.value)}></InputBox>
             </Input>
             <Input>
                 <InputTitle>닉네임</InputTitle>
                 <InputBox
                     placeholder="닉네임을 입력하세요"
                     type="text"
+                    value={nickname} onChange={(e) => setNickname(e.target.value)}
                 />
             </Input>
             <Input>
@@ -64,9 +80,9 @@ function SignupPage() {
                 <InputBox
                     type="password"
                     placeholder="비밀번호 재입력"
-                    value={passwordCheck}
+                    value={passwordConfirm}
                     onChange={(e) => {
-                    setPasswordCheck(e.target.value);
+                    setPasswordConfirm(e.target.value);
                     setPasswordCheckError("");
                     }}
                 />
