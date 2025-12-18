@@ -1,6 +1,8 @@
 import React from 'react'
 import styled from "styled-components";
 
+import TapBar from "../layouts/TapBarComponent";
+
 function CompletePage() {
   return (
     <Container>
@@ -44,6 +46,7 @@ function CompletePage() {
           </ProjectDdayBox>
         </ProjectBox>
       </ProjectBigBox>
+      <TapBar/>
     </Container>
   )
 }
