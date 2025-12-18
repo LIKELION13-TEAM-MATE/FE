@@ -47,7 +47,7 @@ function App() {
           <Route path="/splash" element={<Splash />}></Route>
           <Route path="/" element={<MainPage />}></Route>
           <Route path="/new" element={<NewPage />}></Route>
-          <Route path="/board" element={<BoardPage />}>
+          <Route path="/board/:projectId" element={<BoardPage />}>
             <Route index element={<BoardListPage />} />
             <Route path=":postId" element={<BoardDetailPage />} />
             <Route path="write" element={<WritePage/>}></Route>

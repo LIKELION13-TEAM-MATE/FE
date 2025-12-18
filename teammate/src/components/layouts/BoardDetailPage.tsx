@@ -1,7 +1,8 @@
 import React from 'react'
 import * as B from '../../style/BoardPageStyled';
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useParams } from "react-router-dom";
 import { useState, useRef } from "react";
+import api from "../../lib/axios";
 
 import leftIcon from '../../img/left.svg';
 import menuIcon from '../../img/ellipsis-vertical.svg'
@@ -17,6 +18,7 @@ function BoardDetailPage() {
     const [menuOpen, setMenuOpen] = useState(false);
     const [comment, setComment] = useState("");
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const { postId } = useParams();
 
     const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setComment(e.target.value);
@@ -30,10 +32,48 @@ function BoardDetailPage() {
         textarea.style.height = textarea.scrollHeight + "px";
     }
     };
+    const handleSendComment = async () => {
+    if (!comment.trim()) return; // 빈 댓글 방지
+
+    try {
+        const res = await api.post(`/api/v1/comments/${postId}`, {
+        content: comment,
+        });
+
+        console.log("댓글 작성 성공:", res.data);
+
+        setComment(""); // 입력창 초기화
+    } catch (err) {
+        console.error("댓글 작성 실패:", err);
+    }
+    };
+    const [comments, setComments] = useState([
+    {
+        id: 1,
+        nickname: "홍길동",
+        content: "확인했습니다.",
+        createdAt: "11/10 14:26",
+        mine: false,
+    },
+    {
+        id: 2,
+        nickname: "김채연",
+        content: "확인했습니다.",
+        createdAt: "11/10 14:26",
+        mine: true, // ← 내가 쓴 댓글
+    },
+    ]);
+    const handleDeleteComment = (commentId: number) => {
+    console.log("삭제 요청:", commentId);
+
+    setComments(prev =>
+        prev.filter(comment => comment.id !== commentId)
+    );
+    };
     return (
         <B.DetailGroup>
             <B.DetailTop>
-                <B.leftIcon src={leftIcon} onClick={()=>navigate("/board")}></B.leftIcon>
+                <B.leftIcon src={leftIcon} onClick={()=>navigate("/board/1")}></B.leftIcon>
             </B.DetailTop>
             <B.DetailContentBox>
                 <B.DetailContentTop>
@@ -100,29 +140,28 @@ function BoardDetailPage() {
                         value={comment}
                         onChange={handleCommentChange}>
                         </B.CommentInputBox>
-                        <B.CommentSendBtn src={sendIcon}></B.CommentSendBtn>
+                        <B.CommentSendBtn src={sendIcon} onClick={handleSendComment}></B.CommentSendBtn>
                     </B.DetailContentBottom>
-                    <B.DetailCommentBox>
-                        <B.CommentLeft>
+                    {comments.map(comment => (
+                        <B.DetailCommentBox key={comment.id}>
+                            <B.CommentLeft>
                             <B.CommentTop>
-                                <B.DetailBottomColorCircle color='#FFD4E9'></B.DetailBottomColorCircle>
-                                <B.CommentNickname>홍길동</B.CommentNickname>
+                                <B.DetailBottomColorCircle color="#4DAFFE" />
+                                <B.CommentNickname>{comment.nickname}</B.CommentNickname>
                             </B.CommentTop>
-                            <B.CommentMiddle>확인했습니다.</B.CommentMiddle>
-                            <B.CommentBottom>11/10 14:26</B.CommentBottom>
-                        </B.CommentLeft>
-                    </B.DetailCommentBox>
-                    <B.DetailCommentBox>
-                        <B.CommentLeft>
-                            <B.CommentTop>
-                                <B.DetailBottomColorCircle color='#4DAFFE'></B.DetailBottomColorCircle>
-                                <B.CommentNickname>김채연</B.CommentNickname>
-                            </B.CommentTop>
-                            <B.CommentMiddle>확인했습니다.</B.CommentMiddle>
-                            <B.CommentBottom>11/10 14:26</B.CommentBottom>
-                        </B.CommentLeft>
-                        <B.CommentDelete src={commentTrash}></B.CommentDelete>
-                    </B.DetailCommentBox>
+
+                            <B.CommentMiddle>{comment.content}</B.CommentMiddle>
+                            <B.CommentBottom>{comment.createdAt}</B.CommentBottom>
+                            </B.CommentLeft>
+
+                            {comment.mine && (
+                            <B.CommentDelete
+                                src={commentTrash}
+                                onClick={() => handleDeleteComment(comment.id)}
+                            />
+                            )}
+                        </B.DetailCommentBox>
+                        ))}
                 </B.DetailContent>
             </B.DetailContentBox>
         </B.DetailGroup>

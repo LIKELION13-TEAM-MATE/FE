@@ -1,12 +1,32 @@
-import React from 'react'
+import React,{useState} from 'react'
 import { useNavigate } from "react-router-dom";
 import styled from 'styled-components'
+import api from '../../lib/axios';
 
 
 import logo from '../../img/Logo.svg'
 
 function LoginPage() {
     const navigate = useNavigate();
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+
+    const handleLogin = async () => {
+    console.log("입력값:", username, password);
+
+    try {
+        const res = await api.post("api/v1/members/login", {
+        username: username,
+        password: password,
+        });
+
+        console.log("응답:", res.data);
+
+        navigate("/");
+    } catch (err: any) {
+        console.error("에러:", err.response?.status, err.response?.data);
+    }
+    };
   return (
     <Container>
         <Header>
@@ -14,9 +34,9 @@ function LoginPage() {
             <Description>당신의 팀에, 보이지 않는 한 명을 더</Description>
         </Header>
         <Body>
-            <InputBox placeholder="아이디" type="text"></InputBox>
-            <InputBox placeholder="비밀번호" type="password"></InputBox>
-            <Button>로그인</Button>
+            <InputBox placeholder="아이디" type="text" value={username} onChange={(e) => setUsername(e.target.value)}></InputBox>
+            <InputBox placeholder="비밀번호" type="password" value={password} onChange={(e) => setPassword(e.target.value)}></InputBox>
+            <Button onClick={handleLogin}>로그인</Button>
         </Body>
         <Last>
             <NoAccount>아직 계정이 없나요?</NoAccount>

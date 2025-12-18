@@ -44,7 +44,7 @@ function MainPage() {
                     <M.ingProjectColor color="#E6D4FF"></M.ingProjectColor>
                 </M.ingProjectDdayBox>
             </M.ingProjectBox>
-            <M.ingProjectBox onClick={() => navigate("/board")}>
+            <M.ingProjectBox onClick={() => navigate("/board/1")}>
                 <M.ingProjectContent>멋사 데모데이</M.ingProjectContent>
                 <M.ingProjectDdayBox>
                     <M.ingProjectDday dday={16} >D-16</M.ingProjectDday>

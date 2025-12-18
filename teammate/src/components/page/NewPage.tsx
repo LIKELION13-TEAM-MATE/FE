@@ -1,6 +1,7 @@
 import React,{ useState } from 'react'
 import * as N from '../../style/NewPageStyled';
 import { useNavigate } from "react-router-dom";
+import api from "../../lib/axios";
 
 function NewPage() {
   const [projectName, setProjectName] = useState("");
@@ -24,6 +25,30 @@ function NewPage() {
 const [selectedColor, setSelectedColor] = useState(COLORS[0]);
 
 const navigate = useNavigate();
+
+const handleCreateProject = async () => {
+  try {
+    await api.post("/api/v1/projects", {
+      projectName,
+      category,
+      deadline: deadline.split("T")[0], // 날짜만 추출
+      themeColor: selectedColor,
+    });
+
+    alert("프로젝트가 생성되었습니다.");
+    navigate("/");
+  } catch (err: any) {
+    console.error(err);
+
+    if (err.response?.status === 401) {
+      console.error("로그인이 필요합니다.");
+    } else if (err.response?.status === 400) {
+      console.error("입력값을 확인해주세요.");
+    } else {
+      console.error("프로젝트 생성 실패");
+    }
+  }
+};
 
   return (
     <N.container>
@@ -72,7 +97,7 @@ const navigate = useNavigate();
             </N.newContent>
             <N.newLast>
                 <N.cancel onClick={() => navigate("/")}>취소</N.cancel>
-                <N.make>생성</N.make>
+                <N.make onClick={handleCreateProject}>생성</N.make>
             </N.newLast>
         </N.newBox>
     </N.container>

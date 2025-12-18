@@ -13,18 +13,27 @@ function RoadmapListPage() {
   const navigate = useNavigate();
   const progress = 80;
 
-  const [open, setOpen] = useState(false);
+  const [openSteps, setOpenSteps] = useState<boolean[]>([false, false]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [checkedList, setCheckedList] = useState<boolean[]>([
     false,
     false,
     false,
   ]);
+  
 
   const toggleCheck = (index: number) => {
     setCheckedList(prev =>
       prev.map((checked, i) =>
         i === index ? !checked : checked
+      )
+    );
+  };
+
+  const toggleOpen = (index: number) => {
+    setOpenSteps(prev =>
+      prev.map((open, i) =>
+        i === index ? !open : open
       )
     );
   };
@@ -48,7 +57,7 @@ function RoadmapListPage() {
       <R.RoadmapStepBigBox>
         <R.RoadmapStepBox>
           <R.RoadmapStep>
-            <R.StepCircle open={open}>1</R.StepCircle>
+            <R.StepCircle open={openSteps[0]}>1</R.StepCircle>
 
             <R.RoadmapStepCard>
               <R.StepCardTop>
@@ -102,7 +111,7 @@ function RoadmapListPage() {
               </R.StepCardBottom>
             </R.RoadmapStepCard>
 
-            {open && (
+            {openSteps[0] && (
               <R.OpenBox>
                 <R.CheckSet>
                   <R.CheckLeft>
@@ -156,14 +165,14 @@ function RoadmapListPage() {
 
           <R.OpenBtn
             src={downBtn}
-            open={open}
-            onClick={() => setOpen(prev => !prev)}
+            open={openSteps[0]}
+            onClick={() => toggleOpen(0)}
           />
         </R.RoadmapStepBox>
 
         <R.RoadmapStepBox>
           <R.RoadmapStep>
-            <R.StepCircle open={open} isLast>2</R.StepCircle>
+            <R.StepCircle open={openSteps[1]} isLast>2</R.StepCircle>
 
             <R.RoadmapStepCard>
               <R.StepCardTop>
@@ -217,7 +226,7 @@ function RoadmapListPage() {
               </R.StepCardBottom>
             </R.RoadmapStepCard>
 
-            {open && (
+            {openSteps[1] && (
               <R.OpenBox>
                 <R.CheckSet>
                   <R.CheckLeft>
@@ -271,8 +280,8 @@ function RoadmapListPage() {
 
           <R.OpenBtn
             src={downBtn}
-            open={open}
-            onClick={() => setOpen(prev => !prev)}
+            open={openSteps[1]}
+            onClick={() => toggleOpen(1)}
           />
         </R.RoadmapStepBox>
       </R.RoadmapStepBigBox>
