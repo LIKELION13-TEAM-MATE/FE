@@ -4,54 +4,111 @@ import styled from "styled-components";
 import TapBar from "../layouts/TapBarComponent";
 
 function CompletePage() {
+  interface Project {
+    id: number;
+    projectName: string;
+    themeColor: string;
+    deadline?: string;        // 진행 중
+    dday?: number;
+    completedDate?: string; // 완료
+  }
+
+  // D-day 계산 함수
+  const calculateDday = (deadline: string): number => {
+    const today = new Date();
+    const end = new Date(deadline);
+
+    today.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+
+    const diff = end.getTime() - today.getTime();
+    return Math.ceil(diff / (1000 * 60 * 60 * 24));
+  };
+
+  // 진행 중 프로젝트 (더미)
+  const ongoingProjects: Project[] = [
+    {
+      id: 1,
+      projectName: "⭐ 경영 교양 팀플",
+      deadline: "2025-12-20",
+      themeColor: "#E6D4FF",
+      dday: calculateDday("2025-12-20"),
+    },
+    {
+      id: 2,
+      projectName: "멋사 데모데이",
+      deadline: "2025-12-31",
+      themeColor: "#FFD79E",
+      dday: calculateDday("2025-12-31"),
+    },
+  ];
+
+  // 완료된 프로젝트 (더미)
+  const completedProjects: Project[] = [
+    {
+      id: 3,
+      projectName: "문제해결 해커톤",
+      completedDate: "2025.09.28",
+      themeColor: "#AAB6FF",
+    },
+    {
+      id: 4,
+      projectName: "인식개선 공모전",
+      completedDate: "2025.09.16",
+      themeColor: "#E6FF76",
+    },
+  ];
+
   return (
     <Container>
       <Title>프로젝트 보관함</Title>
+
+      {/* 진행 중 프로젝트 */}
       <ProjectBigBox>
         <ProjectTop>
           <ProjectTitle>진행 중인 프로젝트</ProjectTitle>
-          <ProjectCount>2개</ProjectCount>
+          <ProjectCount>{ongoingProjects.length}개</ProjectCount>
         </ProjectTop>
-        <ProjectBox>
-          <ProjectContent>⭐ 경영 교양 팀플</ProjectContent>
-          <ProjectDdayBox>
-              <ProjectDday dday={3} >D-3</ProjectDday>
-              <ProjectColor color="#E6D4FF"></ProjectColor>
-          </ProjectDdayBox>
-        </ProjectBox>
-        <ProjectBox>
-          <ProjectContent>멋사 데모데이</ProjectContent>
-          <ProjectDdayBox>
-              <ProjectDday dday={16} >D-16</ProjectDday>
-              <ProjectColor color="#FFD79E"></ProjectColor>
-          </ProjectDdayBox>
-        </ProjectBox>
+
+        {ongoingProjects.map(project => (
+          <ProjectBox key={project.id}>
+            <ProjectContent>{project.projectName}</ProjectContent>
+
+            <ProjectDdayBox>
+              <ProjectDday dday={project.dday!}>
+                {project.dday! >= 0
+                  ? `D-${project.dday}`
+                  : `D+${Math.abs(project.dday!)}`}
+              </ProjectDday>
+              <ProjectColor color={project.themeColor} />
+            </ProjectDdayBox>
+          </ProjectBox>
+        ))}
       </ProjectBigBox>
-      <ProjectBigBox className='complete'>
+
+      {/* 완료된 프로젝트 */}
+      <ProjectBigBox className="complete">
         <ProjectTop>
           <ProjectTitle>완료된 프로젝트</ProjectTitle>
         </ProjectTop>
-        <ProjectBox>
-          <ProjectContent>문제해결 해커톤</ProjectContent>
-          <ProjectDdayBox>
-              <ProjectDate>2025.09.28</ProjectDate>
-              <ProjectColor color="#AAB6FF"></ProjectColor>
-          </ProjectDdayBox>
-        </ProjectBox>
-        <ProjectBox>
-          <ProjectContent>인식개선 공모전</ProjectContent>
-          <ProjectDdayBox>
-              <ProjectDate>2025.09.16</ProjectDate>
-              <ProjectColor color="#E6FF76"></ProjectColor>
-          </ProjectDdayBox>
-        </ProjectBox>
+
+        {completedProjects.map(project => (
+          <ProjectBox key={project.id}>
+            <ProjectContent>{project.projectName}</ProjectContent>
+            <ProjectDdayBox>
+              <ProjectDate>{project.completedDate}</ProjectDate>
+              <ProjectColor color={project.themeColor} />
+            </ProjectDdayBox>
+          </ProjectBox>
+        ))}
       </ProjectBigBox>
-      <TapBar/>
+
+      <TapBar />
     </Container>
-  )
+  );
 }
 
-export default CompletePage
+export default CompletePage;
 
 //Styled Components 
 

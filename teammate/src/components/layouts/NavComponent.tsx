@@ -1,11 +1,13 @@
 import React from "react";
 import styled from "styled-components";
-import { NavLink } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 
 function NavComponent() {
+  const { projectId } = useParams(); // URL에서 id 읽기
+
   return (
     <NavWrapper>
-      <StyledLink to="/board/:id">
+      <StyledLink to={`/board/${projectId}`}>
         <NavBtn>게시판</NavBtn>
       </StyledLink>
       <StyledLink to="/roles">
