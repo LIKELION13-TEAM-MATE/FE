@@ -164,7 +164,7 @@ function RolePage() {
             style={{ width: "35px", height: "35px" }}
           />
         </TrashImgBox>
-      </ScheduleContainer>
+      </RoleContainer>
     </RoleWrapper>
   );
 }
