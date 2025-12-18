@@ -2,6 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import * as M from '../../style/MainPageStyled';
 
+import TapBar from "../layouts/TapBarComponent";
+
 import alarmIcon from "../../img/alarm.svg";
 import plusIcon from "../../img/AddNew.svg";
 import sideIcon from "../../img/right.svg";
@@ -137,6 +139,7 @@ function MainPage() {
             </M.toDo>
         </M.myScheduleContent>
       </M.mySchedule>
+      <TapBar/>
     </M.container>
   );
 }

@@ -143,7 +143,7 @@ export const StepCircle = styled.div<{ isLast?: boolean; open: boolean; }>`
     left: 50%;
     transform: translateX(-50%);
     width: 2px;
-    height: ${({ open }) => (open ? "280px" : "110px")};
+    height: ${({ open }) => (open ? "290px" : "110px")};
     background: #E0E6ED;
 
     display: ${({ isLast }) => (isLast ? "none" : "block")};
