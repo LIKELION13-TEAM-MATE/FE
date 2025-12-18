@@ -3,15 +3,39 @@ import styled from "styled-components";
 import Header from "../layouts/HeaderComponent";
 import Nav from "../layouts/NavComponent";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import api from "../../lib/axios";
 
 function ViewSchedulePage() {
+  const [event, setEvent] = useState<any>(null);
+
   // 글씨 색 변경
   const [repeat, setRepeat] = useState("안함");
   const [alarm, setAlarm] = useState("안함");
   const [worker, setWorker] = useState("없음");
 
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const eventId = params.get("eventId");
+
   // 하루종일
   const [isAllDay, setIsAllDay] = useState(false);
+
+  useEffect(() => {
+    if (!eventId) return;
+
+    const fetchEventDetail = async () => {
+      try {
+        const res = await api.get(`/api/v1/projects/1/events/${eventId}`);
+        setEvent(res.data);
+      } catch (e) {
+        console.error("일정 상세 조회 실패", e);
+      }
+    };
+
+    fetchEventDetail();
+  }, [eventId]);
 
   return (
     <ViewScheduleWrapper>
@@ -27,19 +51,39 @@ function ViewSchedulePage() {
           <Link to="/SchedulePage">
             <ScheduleCancell>취소</ScheduleCancell>
           </Link>
-          <Link to="/AddSchedulePage">
+          <Link to={`/AddSchedulePage?eventId=${eventId}`}>
             <ScheduleAdd type="submit">편집</ScheduleAdd>
           </Link>
         </ScheduleControl>
         <AddBox>
           <AddTitleBox>
-            <TitleTxt>정규회의</TitleTxt>
+            <TitleTxt>{event?.title}</TitleTxt>
           </AddTitleBox>
         </AddBox>
         <AddBoxContent>
           <ViewContent>
-            <ViewDay>2025년 11월 7일 화요일</ViewDay>
-            <ViewTime>오전 10:00 ~ 오후 18:00</ViewTime>
+            <ViewDay>
+              {new Date(event?.startDateTime).toLocaleDateString("ko-KR", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                weekday: "long",
+              })}
+            </ViewDay>
+
+            <ViewTime>
+              {new Date(event?.startDateTime).toLocaleTimeString("ko-KR", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+              {" ~ "}
+              {new Date(event?.endDateTime).toLocaleTimeString("ko-KR", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </ViewTime>
+            {/* <ViewDay>2025년 11월 7일 화요일</ViewDay>
+            <ViewTime>오전 10:00 ~ 오후 18:00</ViewTime> */}
           </ViewContent>
           <SetRepeat>
             <SetReTxt>반복</SetReTxt>
@@ -99,7 +143,7 @@ function ViewSchedulePage() {
           </SetWorker>
 
           <SetMemo>
-            <Memo>줌 비밀번호 1234</Memo>
+            <Memo>{event?.memo}</Memo>
           </SetMemo>
         </AddBoxContent>
       </ScheduleControlBox>

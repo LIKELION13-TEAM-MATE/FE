@@ -1,12 +1,59 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import DownCaret from "../../assets/Vector.svg";
 import Header from "../layouts/HeaderComponent";
 import Nav from "../layouts/NavComponent";
 import { Link } from "react-router-dom";
+import api from "../../lib/axios";
 
 function SchedulePage() {
   //날짜 선택 관리
+  const [scheduleCountByDate, setScheduleCountByDate] = useState<
+    Record<number, number>
+  >({});
+
+  useEffect(() => {
+    const fetchMonthEvents = async () => {
+      const res = await api.get(`/api/v1/projects/1/events/month`, {
+        params: {
+          year: 2025,
+          month: 11,
+        },
+      });
+
+      const map: Record<number, number> = {};
+      res.data.forEach((item: any) => {
+        const day = new Date(item.date).getDate();
+        map[day] = item.eventCount;
+      });
+
+      setScheduleCountByDate(map);
+    };
+
+    fetchMonthEvents();
+  }, []);
+
+  // 일정리스트
+  const [events, setEvents] = useState<any[]>([]);
+
+  const handleDateClick = async (date: number) => {
+    setSelectedDate(date);
+
+    const yyyy = 2025;
+    const mm = String(11).padStart(2, "0");
+    const dd = String(date).padStart(2, "0");
+
+    const res = await api.get(`/api/v1/projects/1/events/day`, {
+      params: {
+        date: `${yyyy}-${mm}-${dd}`,
+      },
+    });
+
+    setEvents(res.data);
+  };
+
+  // onClick={() => date && handleDateClick(date)}
+
   const [selectedDate, setSelectedDate] = useState<number | null>(null);
   const dates = [
     null,
@@ -44,18 +91,18 @@ function SchedulePage() {
     30,
   ]; //임시데이터
 
-  // 날짜별 일정 개수 (임시)
-  const scheduleCountByDate: Record<number, number> = {
-    7: 2,
-    9: 1,
-    10: 1,
-    11: 1,
-    22: 4,
-  };
+  // // 날짜별 일정 개수 (임시)
+  // const scheduleCountByDate: Record<number, number> = {
+  //   7: 2,
+  //   9: 1,
+  //   10: 1,
+  //   11: 1,
+  //   22: 4,
+  // };
 
   //오늘 날짜
-  // const today = new Date().getDate();
-  const today = 16; //임시날짜(확인용!)
+  const today = new Date().getDate();
+  // const today = 16; //임시날짜(확인용!)
 
   return (
     <ScheduleWrapper>
@@ -123,7 +170,39 @@ function SchedulePage() {
             <ScheduleDayDate>7일</ScheduleDayDate>
             <ScheduleDWDate>목</ScheduleDWDate>
           </ScheduleDate>
-          <ViewLink to="/ViewSchedulePage">
+          {events.length === 0 ? (
+            <ScheduleDateNone>등록된 일정이 없습니다.</ScheduleDateNone>
+          ) : (
+            events.map((event) => (
+              <ViewLink
+                key={event.eventId}
+                to={`/ViewSchedulePage?eventId=${event.eventId}`}
+              >
+                <SchedulesBox>
+                  <Schedules>
+                    <Content>
+                      <ContentTitle>{event.title}</ContentTitle>
+                      <ContentWith>
+                        {event.creatorName} with{" "}
+                        {event.participantNames.join(", ")}
+                      </ContentWith>
+                    </Content>
+
+                    <ScheduleTime>
+                      <TimeStart>
+                        {new Date(event.startDateTime).toLocaleTimeString()}
+                      </TimeStart>
+                      <TimeFinish>
+                        ~ {new Date(event.endDateTime).toLocaleTimeString()}
+                      </TimeFinish>
+                    </ScheduleTime>
+                  </Schedules>
+                </SchedulesBox>
+              </ViewLink>
+            ))
+          )}
+
+          {/* <ViewLink to="/ViewSchedulePage">
             <SchedulesBox>
               <Schedules>
                 <Content>
@@ -136,23 +215,9 @@ function SchedulePage() {
                 </ScheduleTime>
               </Schedules>
             </SchedulesBox>
-          </ViewLink>
-          <ViewLink to="/ViewSchedulePage">
-            <SchedulesBox>
-              <Schedules>
-                <Content>
-                  <ContentTitle>정규회의</ContentTitle>
-                  <ContentWith>김채연 with 홍길동, 홍길순</ContentWith>
-                </Content>
-                <ScheduleTime>
-                  <TimeStart>10:00 AM</TimeStart>
-                  <TimeFinish>~ 18:00 PM</TimeFinish>
-                </ScheduleTime>
-              </Schedules>
-            </SchedulesBox>
-          </ViewLink>
+          </ViewLink> */}
           {/* 일정 없음 */}
-          <ScheduleDateNone>등록된 일정이 없습니다.</ScheduleDateNone>
+          {/* <ScheduleDateNone>등록된 일정이 없습니다.</ScheduleDateNone> */}
         </ScheduleBox>
       </ScheduleContainer>
       <ScheduleControlBox>
