@@ -11,6 +11,7 @@ import AddSchedulePage from "./components/page/AddSchedulePage";
 import ViewSchedulePage from "./components/page/ViewSchedulePage";
 import ListChatroomPage from "./components/page/ListChatroomPage";
 import CreateChatroomPage from "./components/page/CreateChatroomPage";
+import ChatroomPage from "./components/page/ChatroomPage";
 
 //페이지 외 요소들은 이 밑으로 정리해주세요.
 
@@ -46,6 +47,7 @@ function App() {
             path="/CreateChatroomPage"
             element={<CreateChatroomPage />}
           ></Route>
+          <Route path="/ChatroomPage" element={<ChatroomPage />}></Route>
         </Route>
       </Routes>
     </WebShell>

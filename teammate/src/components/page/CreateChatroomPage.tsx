@@ -26,7 +26,7 @@ function CreateChatroomPage() {
                 ? selectedPeople.join(", ")
                 : "대화상대를 선택하세요"}
               <Arrow>
-                <img src={Stroke} />
+                <img src={Stroke} alt="Stoke" />
               </Arrow>
             </PeopleSelectBox>
 

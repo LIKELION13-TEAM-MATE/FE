@@ -31,33 +31,37 @@ function ListChatroomPage() {
         </PlusCR>
       </SearchCBox>
       <ChatroomListConT>
-        <ChatroomListBox>
-          <MemberPF>
-            <img src={PF} alt="PF" />
-          </MemberPF>
-          <ChatroomDT>
-            <TNBox>
-              <ChatroomTitle>전체 대화방</ChatroomTitle>
-              <ChatroomMemberN>3</ChatroomMemberN>
-            </TNBox>
-            <ChatroomCom>오늘은 기획 단계 마무리합시다!</ChatroomCom>
-          </ChatroomDT>
-          <ChatroomTime>오전 10:11</ChatroomTime>
-        </ChatroomListBox>
+        <ChatroomLink to="/ChatroomPage">
+          <ChatroomListBox>
+            <MemberPF>
+              <img src={PF} alt="PF" />
+            </MemberPF>
+            <ChatroomDT>
+              <TNBox>
+                <ChatroomTitle>전체 대화방</ChatroomTitle>
+                <ChatroomMemberN>3</ChatroomMemberN>
+              </TNBox>
+              <ChatroomCom>오늘은 기획 단계 마무리합시다!</ChatroomCom>
+            </ChatroomDT>
+            <ChatroomTime>오전 10:11</ChatroomTime>
+          </ChatroomListBox>
+        </ChatroomLink>
 
-        <ChatroomListBox>
-          <MemberPF>
-            <img src={PF} alt="PF" />
-          </MemberPF>
-          <ChatroomDT>
-            <TNBox>
-              <ChatroomTitle>전체 대화방</ChatroomTitle>
-              <ChatroomMemberN>3</ChatroomMemberN>
-            </TNBox>
-            <ChatroomCom>오늘은 기획 단계 마무리합시다!</ChatroomCom>
-          </ChatroomDT>
-          <ChatroomTime>오전 10:11</ChatroomTime>
-        </ChatroomListBox>
+        <ChatroomLink to="/ChatroomPage">
+          <ChatroomListBox>
+            <MemberPF>
+              <img src={PF} alt="PF" />
+            </MemberPF>
+            <ChatroomDT>
+              <TNBox>
+                <ChatroomTitle>전체 대화방</ChatroomTitle>
+                <ChatroomMemberN>3</ChatroomMemberN>
+              </TNBox>
+              <ChatroomCom>오늘은 기획 단계 마무리합시다!</ChatroomCom>
+            </ChatroomDT>
+            <ChatroomTime>오전 10:11</ChatroomTime>
+          </ChatroomListBox>
+        </ChatroomLink>
       </ChatroomListConT>
     </ListChatroomWrapper>
   );
@@ -131,6 +135,12 @@ const ChatroomListBox = styled.div`
 const ChatroomTime = styled.div`
   font-size: 13px;
   color: #999999;
+`;
+
+const ChatroomLink = styled(Link)`
+  text-decoration: none;
+  color: inherit;
+  display: block;
 `;
 
 export default ListChatroomPage;
