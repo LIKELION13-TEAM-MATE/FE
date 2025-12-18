@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 export const container = styled.div`
     display: flex;
+    width: 100%;
     align-items: center;
     flex-direction: column;
     gap: 40px;
@@ -27,17 +28,8 @@ export const logoBox = styled.div`
 
 `
 
-export const logo = styled.p`
-    font-weight: bold;
-    font-size: 24px;
-    letter-spacing: 0.06em;
-`
-
-export const logoBlue = styled.p`
-    font-weight: bold;
-    font-size: 24px;
-    color: #4DAFFE;
-    letter-spacing: 0.06em;
+export const logo = styled.img`
+    width: 163px;
 `
 
 export const alarm = styled.img`

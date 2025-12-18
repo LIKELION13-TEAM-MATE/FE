@@ -1,15 +1,17 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import logo from '../../img/Logo.svg'
+
 function Splash() {
   return (
     <Wapper>
-        <Logo>TEAM</Logo>
-        <LogoBlue>.</LogoBlue>
-        <Logo>MATE</Logo>
+        <Logo src={logo}></Logo>
     </Wapper>
   )
 }
+
+//style component
 
 const Wapper = styled.div`
     width: 100%;
@@ -22,17 +24,8 @@ const Wapper = styled.div`
         font-family: Pretendard;
     }
 `
-const Logo = styled.p`
-    font-weight: bold;
-    font-size: 48px;
-    letter-spacing: 0.06em;
-`
-
-const LogoBlue = styled.p`
-    font-weight: bold;
-    font-size: 48px;
-    color: #4DAFFE;
-    letter-spacing: 0.06em;
+const Logo = styled.img`
+    
 `
 
 export default Splash

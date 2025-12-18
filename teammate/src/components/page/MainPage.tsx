@@ -1,18 +1,20 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import * as M from '../../style/MainPageStyled';
 
 import alarmIcon from "../../img/alarm.svg";
 import plusIcon from "../../img/AddNew.svg";
 import sideIcon from "../../img/right.svg";
+import logo from "../../img/Logo.svg"
 
 function MainPage() {
+    const navigate = useNavigate();
+    
   return (
     <M.container>
       <M.header>
         <M.logoBox>
-            <M.logo>TEAM</M.logo>
-            <M.logoBlue>.</M.logoBlue>
-            <M.logo>MATE</M.logo>
+            <M.logo src={logo}></M.logo>
         </M.logoBox>
         <M.alarm src={alarmIcon}></M.alarm>
       </M.header>
@@ -20,7 +22,7 @@ function MainPage() {
         <M.newProjectTitle>새 프로젝트 만들기</M.newProjectTitle>
         <M.newProjectBtn>
             <M.plus src={plusIcon}></M.plus>
-            <M.newProjectBtnContent>프로젝트 생성</M.newProjectBtnContent>
+            <M.newProjectBtnContent onClick={() => navigate("/new")}>프로젝트 생성</M.newProjectBtnContent>
         </M.newProjectBtn>
         <M.newProjectContent>생성 후 초대 링크를 통해 팀원을 초대하세요!</M.newProjectContent>
       </M.newProject>
@@ -40,7 +42,7 @@ function MainPage() {
                     <M.ingProjectColor color="#E6D4FF"></M.ingProjectColor>
                 </M.ingProjectDdayBox>
             </M.ingProjectBox>
-            <M.ingProjectBox>
+            <M.ingProjectBox onClick={() => navigate("/board")}>
                 <M.ingProjectContent>멋사 데모데이</M.ingProjectContent>
                 <M.ingProjectDdayBox>
                     <M.ingProjectDday dday={16} >D-16</M.ingProjectDday>
@@ -49,7 +51,7 @@ function MainPage() {
             </M.ingProjectBox>
             <M.endProject>
                 <M.sideIcon src={sideIcon}></M.sideIcon>
-                <M.endProjectContent>완료된 프로젝트</M.endProjectContent>
+                <M.endProjectContent onClick={() => navigate("/complete")}>완료된 프로젝트</M.endProjectContent>
             </M.endProject>
         </M.ingProjectBody>
       </M.ingProject>

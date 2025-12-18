@@ -1,5 +1,6 @@
 import React,{ useState } from 'react'
 import * as N from '../../style/NewPageStyled';
+import { useNavigate } from "react-router-dom";
 
 function NewPage() {
   const [projectName, setProjectName] = useState("");
@@ -21,6 +22,8 @@ function NewPage() {
 ];
 
 const [selectedColor, setSelectedColor] = useState(COLORS[0]);
+
+const navigate = useNavigate();
 
   return (
     <N.container>
@@ -68,7 +71,7 @@ const [selectedColor, setSelectedColor] = useState(COLORS[0]);
                 </N.inputBox>
             </N.newContent>
             <N.newLast>
-                <N.cancel>취소</N.cancel>
+                <N.cancel onClick={() => navigate("/")}>취소</N.cancel>
                 <N.make>생성</N.make>
             </N.newLast>
         </N.newBox>
