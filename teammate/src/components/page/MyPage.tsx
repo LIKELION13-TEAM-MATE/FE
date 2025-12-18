@@ -2,8 +2,54 @@ import React from "react";
 import styled from "styled-components";
 import myPF from "../../assets/Profile-Picture.svg";
 import Footer from "../layouts/TapBarComponent";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+interface Todo {
+  task: string;
+  project: string;
+}
+
+interface MyPageData {
+  name: string;
+  progress: number;
+  todos: Todo[];
+}
 
 function MyPage() {
+  const [myData, setMyData] = useState<MyPageData>({
+    name: "",
+    progress: 0,
+    todos: [],
+  });
+
+  useEffect(() => {
+    const fetchMyPage = async () => {
+      try {
+        const res = await axios.get(
+          "https://team-mate.shop/api/v1/members/mypage",
+          {
+            withCredentials: true, // 로그인 유지
+          }
+        );
+
+        console.log("MyPage 응답:", res.data);
+        setMyData(res.data);
+      } catch (error) {
+        console.error("MyPage API 실패", error);
+      }
+    };
+
+    fetchMyPage();
+  }, []);
+
+  const Bar = styled.div<{ per: number }>`
+    width: ${(props) => props.per * 2}px;
+    height: 6px;
+    border-radius: 40px;
+    background: linear-gradient(90deg, #117ed5 0%, #4daffe 50%, #a1d2f9 100%);
+  `;
+
   return (
     <MyWrapper>
       <MyHd>
@@ -21,15 +67,15 @@ function MyPage() {
           <MySubBox>
             <MYWelcome>
               <MyTxt>안녕하세요,</MyTxt>
-              <MyName>김채연</MyName>
+              <MyName>{myData.name || "사용자"}</MyName>
               <MyTxt>님!</MyTxt>
             </MYWelcome>
             <MySubT>진행 중인 프로젝트 진행도</MySubT>
             <RBox>
               <RBarBox>
-                <Bar></Bar>
+                <Bar per={myData.progress}></Bar>
               </RBarBox>
-              <RPer>80%</RPer>
+              <RPer>{myData.progress}%</RPer>
             </RBox>
           </MySubBox>
         </MyPFBox>
@@ -37,7 +83,23 @@ function MyPage() {
           <TotoTitle>나의 할 일</TotoTitle>
           <ToDoBox>
             <MyCheList>
-              <CheCon>
+              <MyCheList>
+                {myData.todos.length === 0 ? (
+                  <NoWork>할 일이 없습니다.</NoWork>
+                ) : (
+                  myData.todos.map((todo, idx) => (
+                    <CheCon key={idx}>
+                      <MyCheckbox /> {todo.task}
+                      <CheSubBox>
+                        <ChSub>{todo.project}</ChSub>
+                      </CheSubBox>
+                    </CheCon>
+                  ))
+                )}
+              </MyCheList>
+              {/* <NoWork>할 일이 없습니다.</NoWork> */}
+
+              {/* <CheCon>
                 <MyCheckbox type="checkbox" /> 기획서 작성
                 <CheSubBox>
                   <ChSub>멋사 데모데이</ChSub>
@@ -54,7 +116,7 @@ function MyPage() {
                 <CheSubBox>
                   <ChSub>경영 교양 팀플</ChSub>
                 </CheSubBox>
-              </CheCon>
+              </CheCon> */}
             </MyCheList>
             <MyDDay>D-1</MyDDay>
           </ToDoBox>
@@ -156,7 +218,7 @@ const ToDoBox = styled.div`
   box-shadow: 0px -1px 6px rgba(198, 198, 198, 0.6);
 
   display: flex;
-  gap: 50px;
+  justify-content: space-between;
 `;
 const MyCheList = styled.div`
   font-size: 15px;
@@ -197,6 +259,11 @@ const ExCon = styled.div`
 `;
 const FSY = styled.div`
   margin-left: -26.4px;
+`;
+
+const NoWork = styled.div`
+  font-size: 14px;
+  color: #9999;
 `;
 
 export default MyPage;
