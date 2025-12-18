@@ -217,11 +217,11 @@ export const CommentName = styled.p`
 `
 
 export const ContentImgBox = styled.div`
-    height: 100px;
+    height: 104px;
     width: 100%;
     display: flex;
     gap: 11px;
-    padding-top: 16px;
+    padding: 16px 0 0 3px;
 `
 
 export const ContentImg = styled.img`

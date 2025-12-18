@@ -1,16 +1,51 @@
-import React from 'react'
+import React,{useState} from 'react'
 import styled from "styled-components"
 
 import Header from "../../components/layouts/HeaderComponent";
 
 function InvitePage() {
+  const [members, setMembers] = useState([
+    {
+      id: 1,
+      name: "홍길동",
+      color: "#FFD4E9",
+    },
+    {
+      id: 2,
+      name: "홍길순",
+      color: "#E6D4FF",
+    },
+  ]);
+
+  const [inviteName, setInviteName] = useState("");
+  const handleInvite = () => {
+      if (!inviteName.trim()) return;
+
+      const newMember = {
+        id: Date.now(), // 더미용 고유값
+        name: inviteName,
+        color: "#D7E6DD", // 임의 색
+      };
+
+      setMembers(prev => [...prev, newMember]);
+      setInviteName("");
+    };
+
+    const handleKick = (memberId: number) => {
+      setMembers(prev =>
+        prev.filter(member => member.id !== memberId)
+      );
+    };
+
   return (
     <Container>
       <Header/>
       <Body>
         <InviteBox>
-          <InviteInput></InviteInput>
-          <InviteBtn>초대</InviteBtn>
+          <InviteInput value={inviteName}
+          onChange={(e) => setInviteName(e.target.value)}
+          placeholder="초대할 팀원 ID"></InviteInput>
+          <InviteBtn onClick={handleInvite}>초대</InviteBtn>
         </InviteBox>
         <MemberBox>
           <Me>
@@ -19,20 +54,15 @@ function InvitePage() {
             <ItsMe>(나)</ItsMe>
           </Me>
           <OtherMember>
-            <Member>
-              <MemberLeft>
-                <ColorCircle color='#FFD4E9'></ColorCircle>
-                <MemberName>홍길동</MemberName>
-              </MemberLeft>
-              <Out>탈퇴</Out>
-            </Member>
-            <Member>
-              <MemberLeft>
-                <ColorCircle color='#E6D4FF'></ColorCircle>
-                <MemberName>홍길순</MemberName>
-              </MemberLeft>
-              <Out>탈퇴</Out>
-            </Member>
+            {members.map(member => (
+              <Member key={member.id}>
+                <MemberLeft>
+                  <ColorCircle color={member.color} />
+                  <MemberName>{member.name}</MemberName>
+                </MemberLeft>
+                <Out onClick={() => handleKick(member.id)}>탈퇴</Out>
+              </Member>
+            ))}
           </OtherMember>
         </MemberBox>
       </Body>
@@ -84,6 +114,15 @@ const InviteInput = styled.input`
   &:focus{
     border: none;
     outline: 0;
+  }
+
+  &::placeholder{
+    color:#999;
+font-family: Pretendard;
+font-size: 14px;
+font-style: normal;
+font-weight: 600;
+line-height: 20px; 
   }
 `
 

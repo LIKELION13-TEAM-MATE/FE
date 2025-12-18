@@ -444,3 +444,105 @@ export const DropdownContent = styled.p`
     font-weight: 400;
     white-space: nowrap;
 `
+
+
+//write 부분 스타일
+
+export const WriteBody = styled.div`
+display: flex;
+width: 345px;
+height: 562px;
+padding: 30px 20px;
+box-sizing: border-box;
+flex-direction: column;
+justify-content: space-between;
+align-items: center;
+border-radius: 16px;
+background: #FFF;
+box-shadow: 0 1px 6px 0 rgba(128, 128, 128, 0.20);
+`
+
+export const WriteTop = styled.div`
+width: 100%;
+display: flex;
+flex-direction: column;
+gap: 20px;
+`
+
+export const WriteBottom = styled.div`
+width: 100%;
+display: flex;
+align-items: center;
+justify-content: space-between;
+`
+
+export const Delete = styled.p`
+color: #55718A;
+font-size: 16px;
+font-weight: 700;
+line-height: 26px; /* 162.5% */
+letter-spacing: 0.96px;
+`
+
+export const Create = styled.div`
+display: flex;
+padding: 6px 12px;
+align-items: center;
+justify-content: center;
+box-sizing: border-box;
+border-radius: 8px;
+background: #4DAFFE;
+
+color: #FFF;
+
+font-family: Pretendard;
+font-size: 16px;
+font-weight: 700;
+line-height: 26px; /* 162.5% */
+letter-spacing: 0.96px;
+`
+
+export const InputSet = styled.div`
+display: flex;
+flex-direction: column;
+gap: 6px;
+`
+
+export const InputTitle = styled.p`
+color:#999;
+font-size: 12px;
+font-weight: 500;
+`
+
+export const InputBox = styled.div`
+display: flex;
+padding: 10px 12px;
+height: 37px;
+box-sizing: border-box;
+width: 100%;
+justify-content: space-between;
+align-items: center;
+border-radius: 6px;
+border: 1px solid #EEE;
+background: #FFF;
+color: #21272A;
+font-family: 'Pretendard';
+font-size: 16px;
+font-weight: 500;
+`
+
+export const Input = styled.input`
+    align-items: center;
+    width: 100%;
+    border: none;
+
+    color: #21272A;
+    font-family: 'Pretendard';
+    font-size: 14px;
+    font-weight: 500;
+
+    &:focus{
+        outline: 0;
+        border: 0;
+    }
+`
