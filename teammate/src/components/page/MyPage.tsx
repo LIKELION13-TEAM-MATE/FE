@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import myPF from "../../assets/Profile-Picture.svg";
+import Footer from "../layouts/TapBarComponent";
 
 function MyPage() {
   return (
@@ -59,6 +60,23 @@ function MyPage() {
           </ToDoBox>
         </MyToDoBox>
       </MyBox>
+      <MyexplanBox>
+        <MyEx>
+          <Title>기여도 요약</Title>
+          <ExCon>알림 설정</ExCon>
+        </MyEx>
+        <MyEx>
+          <Title>프로필 수정</Title>
+          <ExCon>개인정보 수정</ExCon>
+        </MyEx>
+        <MyEx>
+          <Title>고객센더</Title>
+          <ExCon>공지사항</ExCon>
+        </MyEx>
+      </MyexplanBox>
+      <FSY>
+        <Footer></Footer>
+      </FSY>
     </MyWrapper>
   );
 }
@@ -123,13 +141,14 @@ const RPer = styled.div`
 
 // 나의할일
 const MyToDoBox = styled.div`
-  margin-top: 20px;
+  margin-top: 30px;
 `;
 const TotoTitle = styled.div`
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
 `;
 const ToDoBox = styled.div`
+  margin-top: 8px;
   border-radius: 15px;
   padding: 20px;
   width: 300px;
@@ -137,8 +156,7 @@ const ToDoBox = styled.div`
   box-shadow: 0px -1px 6px rgba(198, 198, 198, 0.6);
 
   display: flex;
-  gap: 20px;
-  align-items: center;
+  gap: 50px;
 `;
 const MyCheList = styled.div`
   font-size: 15px;
@@ -160,6 +178,25 @@ const ChSub = styled.div`
   padding: 3px 4px;
   border-radius: 20px;
 `;
-const MyDDay = styled.div``;
+const MyDDay = styled.div`
+  font-size: 12px;
+  color: red;
+`;
+
+const MyexplanBox = styled.div`
+  margin-top: 35px;
+`;
+const MyEx = styled.div`
+  border-top: 1px solid #d1d1d1;
+  padding: 20px 0;
+  font-size: 13.5px;
+`;
+const Title = styled.div``;
+const ExCon = styled.div`
+  margin-top: 10px;
+`;
+const FSY = styled.div`
+  margin-left: -26.4px;
+`;
 
 export default MyPage;
