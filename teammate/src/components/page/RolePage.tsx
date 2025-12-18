@@ -74,7 +74,7 @@ function RolePage() {
   return (
     <RoleWrapper>
       {/* 공동 헤더 컴포넌트 추가 */}
-      <ScheduleContainer>
+      <RoleContainer>
         <AddContainer>
           {roles.map((role) => (
             <AddBox key={role.id}>
@@ -173,7 +173,7 @@ const RoleWrapper = styled.div`
   background-color: #f8fafc;
 `;
 
-const ScheduleContainer = styled.div`
+const RoleContainer = styled.div`
   width: 295px;
   height: 613px;
   min-height: 90vh;
