@@ -102,7 +102,7 @@ function ListChatroomPage() {
             </ChatroomListBox>
           </ChatroomLink>
         ))}
-        {/* <ChatroomLink to="/ChatroomPage">
+        <ChatroomLink to="/ChatroomPage">
           <ChatroomListBox>
             <MemberPF>
               <img src={PF} alt="PF" />
@@ -117,7 +117,7 @@ function ListChatroomPage() {
             <ChatroomTime>오전 10:11</ChatroomTime>
           </ChatroomListBox>
         </ChatroomLink>
-
+        {/*
         <ChatroomLink to="/ChatroomPage">
           <ChatroomListBox>
             <MemberPF>
