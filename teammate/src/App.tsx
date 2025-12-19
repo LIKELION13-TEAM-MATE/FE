@@ -49,7 +49,7 @@ function App() {
       <Routes>
         <Route element={<MainLayout />}>
           <Route path="/splash" element={<Splash />}></Route>
-          <Route path="/main" element={<MainPage />}></Route>
+          <Route path="/" element={<MainPage />}></Route>
           <Route path="/new" element={<NewPage />}></Route>
           <Route path="/board/:projectId" element={<BoardPage />}>
             <Route index element={<BoardListPage />} />
@@ -67,7 +67,7 @@ function App() {
           <Route path="/invite/:projectId" element={<InvitePage />} />
           <Route path="/complete" element={<CompletePage />}></Route>
           <Route path="/signup" element={<SignupPage />}></Route>
-          <Route path="/" element={<LoginPage />}></Route>
+          <Route path="/login" element={<LoginPage />}></Route>
           <Route path="/roadmap/:projectId" element={<RoadmapPage />}>
             <Route index element={<RoadmapListPage />} />
             <Route path="write" element={<RoadmapWritePage />} />
