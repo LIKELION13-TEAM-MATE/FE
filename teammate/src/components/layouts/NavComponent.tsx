@@ -1,25 +1,32 @@
 import React from "react";
 import styled from "styled-components";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
-function NavComponent() {
-  const { projectId } = useParams(); // URL에서 id 읽기
+interface NavProps {
+  projectId?: string;
+}
+
+function NavComponent({ projectId }: NavProps) {
 
   return (
     <NavWrapper>
       <StyledLink to={`/board/${projectId}`}>
         <NavBtn>게시판</NavBtn>
       </StyledLink>
-      <StyledLink to="/roles">
+
+      <StyledLink to={`/roles/${projectId}`}>
         <NavBtn>역할</NavBtn>
       </StyledLink>
-      <StyledLink to="/schedule">
+
+      <StyledLink to={`/schedule/${projectId}`}>
         <NavBtn>일정</NavBtn>
       </StyledLink>
-      <StyledLink to="/roadmap">
+
+      <StyledLink to={`/roadmap/${projectId}`}>
         <NavBtn>로드맵</NavBtn>
       </StyledLink>
-      <StyledLink to="/chat">
+
+      <StyledLink to={`/chat/${projectId}`}>
         <NavBtn>대화방</NavBtn>
       </StyledLink>
     </NavWrapper>
@@ -27,6 +34,7 @@ function NavComponent() {
 }
 
 export default NavComponent;
+
 
 //Styled Components 
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import * as B from '../../style/BoardPageStyled';
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../../lib/axios";
@@ -7,12 +7,36 @@ import x from '../../img/x.svg';
 import fileIcon from '../../img/file-plus-corner.svg';
 import voteIcon from '../../img/vote.svg';
 
-function BoardWritePage() {
+function BoardEditPage() {
   const navigate = useNavigate();
-  const { projectId } = useParams();
+  const { projectId, postId } = useParams();
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+
+  // 기존 게시글 불러오기
+  useEffect(() => {
+    api.get(`/api/v1/posts/${postId}`).then(res => {
+      setTitle(res.data.title);
+      setContent(res.data.content);
+    });
+  }, [postId]);
+
+  // 수정 저장하기
+  const handleUpdate = async () => {
+    try {
+      await api.put(`/api/v1/posts/${postId}`, {
+        title,
+        content,
+      });
+
+      alert("게시글이 수정되었습니다.");
+      navigate(`/board/${projectId}/${postId}`);
+    } catch (err) {
+      console.error("게시글 수정 실패:", err);
+      alert("수정 중 오류가 발생했습니다.");
+    }
+  };
 
   const [images, setImages] = useState<File[]>([]);
 
@@ -50,24 +74,6 @@ function BoardWritePage() {
     images.forEach(file => {
       formData.append("files", file);
     });
-
-    try {
-      const res = await api.post(
-        `/api/v1/projects/${projectId}/posts`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }
-        }
-      );
-
-      console.log("게시글 생성 성공:", res.data);
-      navigate(`/board/${projectId}`);
-    } catch (err: any) {
-      console.error("게시글 생성 실패", err.response || err);
-      alert("게시글 생성 실패");
-    }
   };
 
   return (
@@ -127,9 +133,7 @@ function BoardWritePage() {
           </B.WriteContentBottom>
 
           <B.WriteContentLast>
-            <B.WriteFinBtn onClick={handleCreatePost}>
-              작성하기
-            </B.WriteFinBtn>
+            <button onClick={handleUpdate}>저장하기</button>
           </B.WriteContentLast>
 
         </B.WriteContent>
@@ -138,4 +142,4 @@ function BoardWritePage() {
   );
 }
 
-export default BoardWritePage;
+export default BoardEditPage;

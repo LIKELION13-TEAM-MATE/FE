@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
 import styled from "styled-components";
+import api from "../../lib/axios";
 
 import TapBar from "../layouts/TapBarComponent";
 
@@ -8,12 +9,23 @@ function CompletePage() {
     id: number;
     projectName: string;
     themeColor: string;
-    deadline?: string;        // 진행 중
-    dday?: number;
-    completedDate?: string; // 완료
+    deadline: string;
+    dday: number;
   }
 
-  // D-day 계산 함수
+  interface CompletedProject {
+    id: number;
+    projectName: string;
+    themeColor: string;
+    completedDate: string;
+  }
+
+  const [ongoingProjects, setOngoingProjects] = useState<Project[]>([]);
+  const [completedProjects, setCompletedProjects] = useState<CompletedProject[]>([]);
+
+  // ------------------------------
+  // 📌 D-day 계산
+  // ------------------------------
   const calculateDday = (deadline: string): number => {
     const today = new Date();
     const end = new Date(deadline);
@@ -25,39 +37,45 @@ function CompletePage() {
     return Math.ceil(diff / (1000 * 60 * 60 * 24));
   };
 
-  // 진행 중 프로젝트 (더미)
-  const ongoingProjects: Project[] = [
-    {
-      id: 1,
-      projectName: "⭐ 경영 교양 팀플",
-      deadline: "2025-12-20",
-      themeColor: "#E6D4FF",
-      dday: calculateDday("2025-12-20"),
-    },
-    {
-      id: 2,
-      projectName: "멋사 데모데이",
-      deadline: "2025-12-31",
-      themeColor: "#FFD79E",
-      dday: calculateDday("2025-12-31"),
-    },
-  ];
+  // ------------------------------
+  // 📌 API 연동 - 프로젝트 리스트 조회
+  // ------------------------------
+  useEffect(() => {
+    api
+      .get("/api/v1/projects")
+      .then((res) => {
+        console.log("프로젝트 목록:", res.data);
 
-  // 완료된 프로젝트 (더미)
-  const completedProjects: Project[] = [
-    {
-      id: 3,
-      projectName: "문제해결 해커톤",
-      completedDate: "2025.09.28",
-      themeColor: "#AAB6FF",
-    },
-    {
-      id: 4,
-      projectName: "인식개선 공모전",
-      completedDate: "2025.09.16",
-      themeColor: "#E6FF76",
-    },
-  ];
+        const ongoing: Project[] = [];
+        const completed: CompletedProject[] = [];
+
+        res.data.forEach((p: any) => {
+          const dday = calculateDday(p.deadline);
+
+          if (dday >= 0) {
+            // 진행 중
+            ongoing.push({
+              ...p,
+              dday,
+            });
+          } else {
+            // 완료된 프로젝트 = 날짜 지난 프로젝트
+            completed.push({
+              id: p.id,
+              projectName: p.projectName,
+              themeColor: p.themeColor,
+              completedDate: p.deadline.replace(/-/g, "."),
+            });
+          }
+        });
+
+        setOngoingProjects(ongoing);
+        setCompletedProjects(completed);
+      })
+      .catch((err) => {
+        console.error("프로젝트 조회 실패:", err);
+      });
+  }, []);
 
   return (
     <Container>
@@ -70,15 +88,13 @@ function CompletePage() {
           <ProjectCount>{ongoingProjects.length}개</ProjectCount>
         </ProjectTop>
 
-        {ongoingProjects.map(project => (
+        {ongoingProjects.map((project) => (
           <ProjectBox key={project.id}>
             <ProjectContent>{project.projectName}</ProjectContent>
 
             <ProjectDdayBox>
-              <ProjectDday dday={project.dday!}>
-                {project.dday! >= 0
-                  ? `D-${project.dday}`
-                  : `D+${Math.abs(project.dday!)}`}
+              <ProjectDday dday={project.dday}>
+                {project.dday >= 0 ? `D-${project.dday}` : `D+${Math.abs(project.dday)}`}
               </ProjectDday>
               <ProjectColor color={project.themeColor} />
             </ProjectDdayBox>
@@ -92,9 +108,10 @@ function CompletePage() {
           <ProjectTitle>완료된 프로젝트</ProjectTitle>
         </ProjectTop>
 
-        {completedProjects.map(project => (
+        {completedProjects.map((project) => (
           <ProjectBox key={project.id}>
             <ProjectContent>{project.projectName}</ProjectContent>
+
             <ProjectDdayBox>
               <ProjectDate>{project.completedDate}</ProjectDate>
               <ProjectColor color={project.themeColor} />

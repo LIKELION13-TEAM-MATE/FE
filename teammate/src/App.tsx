@@ -25,6 +25,8 @@ import ViewSchedulePage from "./components/page/ViewSchedulePage";
 import ListChatroomPage from "./components/page/ListChatroomPage";
 import CreateChatroomPage from "./components/page/CreateChatroomPage";
 import ChatroomPage from "./components/page/ChatroomPage";
+import BoardEditPage from "./components/layouts/BoardEditPage copy";
+import ProjectEditPage from "./components/page/ProjectEditPage";
 
 //페이지 외 요소들은 이 밑으로 정리해주세요.
 
@@ -51,14 +53,16 @@ function App() {
             <Route index element={<BoardListPage />} />
             <Route path=":postId" element={<BoardDetailPage />} />
             <Route path="write" element={<WritePage/>}></Route>
+            <Route path="/board/:projectId/:postId/edit" element={<BoardEditPage />} />
           </Route>
-          <Route path="/invite" element={<InvitePage/>}></Route>
+          <Route path="/project/:projectId/edit" element={<ProjectEditPage />} />
+          <Route path="/invite/:projectId" element={<InvitePage />} />
           <Route path="/complete" element={<CompletePage/>}></Route>
           <Route path="/signup" element={<SignupPage />}></Route>
           <Route path="/login" element={<LoginPage />}></Route>
-          <Route path="/roadmap" element={<RoadmapPage />}>
+          <Route path="/roadmap/:projectId" element={<RoadmapPage />}>
             <Route index element={<RoadmapListPage />} />
-            <Route path="write" element={<RoadmapWritePage/>}></Route>
+            <Route path="write" element={<RoadmapWritePage />} />
           </Route>
           <Route path="/RolePage" element={<RolePage />}></Route>
           <Route path="/SchedulePage" element={<SchedulePage />}></Route>

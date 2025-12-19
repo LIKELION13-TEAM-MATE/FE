@@ -135,11 +135,11 @@ export const StepCircle = styled.div<{ isLast?: boolean; open: boolean; }>`
     font-family: Pretendard;
     font-size: 16px;
     font-weight: 600;
-
+/* 
      &::after {
     content: "";
     position: absolute;
-    top: 24px;          /* 원 바로 아래부터 */
+    top: 24px;          
     left: 50%;
     transform: translateX(-50%);
     width: 2px;
@@ -148,6 +148,7 @@ export const StepCircle = styled.div<{ isLast?: boolean; open: boolean; }>`
 
     display: ${({ isLast }) => (isLast ? "none" : "block")};
   }
+   */
 `
 
 export const RoadmapStepCard = styled.div`
@@ -596,7 +597,7 @@ export const StepArrow = styled.div`
   height: 0;
   border-left: 6px solid transparent;
   border-right: 6px solid transparent;
-  border-top: 8px solid #777; /* ▼ 색상 */
+  border-top: 8px solid #777;
 
   pointer-events: none; /* 클릭 방해 안 하게 */
 `;

@@ -11,75 +11,72 @@ import sideIcon from "../../img/right.svg";
 import logo from "../../img/Logo.svg"
 
 function MainPage() {
-    const navigate = useNavigate();
-    interface Project {
-        id: number;
-        projectName: string;
-        category: string;
-        deadline: string;
-        themeColor: string;
-        dday: number;
-    }
+  const navigate = useNavigate();
 
-    interface DummyProject {
-        id: number;
-        projectName: string;
-        deadline: string;
-        themeColor: string;
-        isClickable?: boolean;
-        dday: number;
-    }
-    const [projects, setProjects] = useState<Project[]>([]);
+  interface Project {
+    id: number;
+    projectName: string;
+    category: string;
+    deadline: string;
+    themeColor: string;
+    dday: number;
+  }
 
-    const calculateDday = (deadline: string): number => {
-        const today = new Date();
-        const end = new Date(deadline);
+  const [projects, setProjects] = useState<Project[]>([]);
 
-        today.setHours(0, 0, 0, 0);
-        end.setHours(0, 0, 0, 0);
+  // D-DAY 계산
+  const calculateDday = (deadline: string): number => {
+    const today = new Date();
+    const end = new Date(deadline);
 
-        const diff = end.getTime() - today.getTime();
-        return Math.ceil(diff / (1000 * 60 * 60 * 24));
-    };
+    today.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
 
-    const dummyProjects: DummyProject[] = [
-        {
-        id: 0,
-        projectName: "⭐ 경영 교양 팀플",
-        deadline: "2025-12-20",
-        themeColor: "#E6D4FF",
-        dday: calculateDday("2025-12-20"),
-        },
-        {
-        id: 1,
-        projectName: "멋사 데모데이",
-        deadline: "2025-12-31",
-        themeColor: "#FFD79E",
-        isClickable: true,
-        dday: calculateDday("2025-12-31"),
-        },
-    ];
+    const diff = end.getTime() - today.getTime();
+    return Math.ceil(diff / (1000 * 60 * 60 * 24));
+  };
 
-    
-    useEffect(() => {
-        api
-        .get("/api/v1/projects")
-        .then((res) => {
-            console.log("프로젝트 목록:", res.data);
+  // ------------------------------
+  // 📌 API 연동 - 실제 데이터 불러오기
+  // ------------------------------
+  useEffect(() => {
+    api
+      .get("/api/v1/projects")
+      .then((res) => {
+        console.log("프로젝트 목록:", res.data);
 
-            const processed = res.data.map((p: Project) => ({
-            ...p,
-            dday: calculateDday(p.deadline),
-            }));
+        const processed = res.data.map((p: Project) => ({
+          ...p,
+          dday: calculateDday(p.deadline),
+        }));
 
-            setProjects(processed);
-        })
-        .catch((err) => {
-            console.error("프로젝트 목록 조회 실패:", err);
-        });
-    }, []);
-    
-    
+        setProjects(processed);
+      })
+      .catch((err) => {
+        console.error("프로젝트 목록 조회 실패:", err);
+
+        // 실패했을 때 임시 더미 사용(옵션)
+        setProjects([
+          {
+            id: 0,
+            projectName: "⭐ 경영 교양 팀플",
+            category: "",
+            deadline: "2025-12-20",
+            themeColor: "#E6D4FF",
+            dday: calculateDday("2025-12-20")
+          },
+          {
+            id: 1,
+            projectName: "멋사 데모데이",
+            category: "",
+            deadline: "2025-12-31",
+            themeColor: "#FFD79E",
+            dday: calculateDday("2025-12-31")
+          }
+        ]);
+      });
+  }, []);
+
   return (
     <M.container>
       <M.header>
@@ -92,12 +89,14 @@ function MainPage() {
       {/* 새 프로젝트 생성 */}
       <M.newProject>
         <M.newProjectTitle>새 프로젝트 만들기</M.newProjectTitle>
-        <M.newProjectBtn>
+
+        <M.newProjectBtn onClick={() => navigate("/new")}>
           <M.plus src={plusIcon} />
-          <M.newProjectBtnContent onClick={() => navigate("/new")}>
+          <M.newProjectBtnContent>
             프로젝트 생성
           </M.newProjectBtnContent>
         </M.newProjectBtn>
+
         <M.newProjectContent>
           생성 후 초대 링크를 통해 팀원을 초대하세요!
         </M.newProjectContent>
@@ -110,18 +109,15 @@ function MainPage() {
             <M.ingProjectMiniTitle>내 프로젝트</M.ingProjectMiniTitle>
             <M.ingProjectTitle>진행 중인 프로젝트</M.ingProjectTitle>
           </M.ingProjectTitleBox>
-          <M.ingProjectCount>{dummyProjects.length}개</M.ingProjectCount>
+
+          <M.ingProjectCount>{projects.length}개</M.ingProjectCount>
         </M.ingProjectHeader>
 
         <M.ingProjectBody>
-          {dummyProjects.map((project) => (
+          {projects.map((project) => (
             <M.ingProjectBox
               key={project.id}
-              onClick={
-                project.isClickable
-                  ? () => navigate(`/board/${project.id}`)
-                  : undefined
-              }
+              onClick={() => navigate(`/board/${project.id}`)}
             >
               <M.ingProjectContent>{project.projectName}</M.ingProjectContent>
 
@@ -149,45 +145,27 @@ function MainPage() {
       {/* 일정 */}
       <M.mySchedule>
         <M.myScheduleTitle>내 일정</M.myScheduleTitle>
+
         <M.myScheduleContent>
           <M.calendar>
-            <M.yearMonth>2025.11</M.yearMonth>
+            <M.yearMonth>2025.12</M.yearMonth>
             <M.week>
-              <M.daySet>
-                <M.dayOfTheWeek>일</M.dayOfTheWeek>
-                <M.day>5</M.day>
-              </M.daySet>
-              <M.daySet>
-                <M.dayOfTheWeek>월</M.dayOfTheWeek>
-                <M.day>6</M.day>
-              </M.daySet>
-              <M.daySet>
-                <M.dayOfTheWeek>화</M.dayOfTheWeek>
-                <M.day isToday={true}>7</M.day>
-              </M.daySet>
-              <M.daySet>
-                <M.dayOfTheWeek>수</M.dayOfTheWeek>
-                <M.day>8</M.day>
-              </M.daySet>
-              <M.daySet>
-                <M.dayOfTheWeek>목</M.dayOfTheWeek>
-                <M.day>9</M.day>
-              </M.daySet>
-              <M.daySet>
-                <M.dayOfTheWeek>금</M.dayOfTheWeek>
-                <M.day>10</M.day>
-              </M.daySet>
-              <M.daySet>
-                <M.dayOfTheWeek>토</M.dayOfTheWeek>
-                <M.day>11</M.day>
-              </M.daySet>
+              <M.daySet><M.dayOfTheWeek>일</M.dayOfTheWeek><M.day>14</M.day></M.daySet>
+              <M.daySet><M.dayOfTheWeek>월</M.dayOfTheWeek><M.day>15</M.day></M.daySet>
+              <M.daySet><M.dayOfTheWeek>화</M.dayOfTheWeek><M.day>16</M.day></M.daySet>
+              <M.daySet><M.dayOfTheWeek>수</M.dayOfTheWeek><M.day>17</M.day></M.daySet>
+              <M.daySet><M.dayOfTheWeek>목</M.dayOfTheWeek><M.day>18</M.day></M.daySet>
+              <M.daySet><M.dayOfTheWeek>금</M.dayOfTheWeek><M.day isToday>19</M.day></M.daySet>
+              <M.daySet><M.dayOfTheWeek>토</M.dayOfTheWeek><M.day>20</M.day></M.daySet>
             </M.week>
           </M.calendar>
 
           {/* 일정 더미 */}
           <M.toDo>
+            {/* 오늘 일정 */}
             <M.toDoBigBox>
               <M.date>오늘</M.date>
+
               <M.toDoBox color="#E6D4FF">
                 <M.toDoContentBigBox>
                   <M.toDoContentBox>
@@ -215,8 +193,10 @@ function MainPage() {
               </M.toDoBox>
             </M.toDoBigBox>
 
+            {/* 내일 일정 */}
             <M.toDoBigBox>
               <M.date>내일</M.date>
+
               <M.toDoBox color="#FFD79E">
                 <M.toDoContentBigBox>
                   <M.toDoContentBox>
