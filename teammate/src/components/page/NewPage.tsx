@@ -96,7 +96,7 @@ const handleCreateProject = async () => {
                 </N.inputBox>
             </N.newContent>
             <N.newLast>
-                <N.cancel onClick={() => navigate("/")}>취소</N.cancel>
+                <N.cancel onClick={() => navigate("/main")}>취소</N.cancel>
                 <N.make onClick={handleCreateProject}>생성</N.make>
             </N.newLast>
         </N.newBox>
