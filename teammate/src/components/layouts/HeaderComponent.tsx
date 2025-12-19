@@ -5,20 +5,26 @@ import { useNavigate } from "react-router-dom";
 import leftIcon from "../../img/left.svg";
 import inviteIcon from "../../img/circle-plus.svg";
 
-function HeaderComponent() {
+interface HeaderProps {
+  category: string;
+  title: string;
+  projectId?: string;
+}
+
+function HeaderComponent({ category, title, projectId }: HeaderProps) {
   const navigate = useNavigate();
 
   return (
     <Header>
       <LeftHeader>
-        <SideClick src={leftIcon} onClick={() => navigate("/")}/>
+        <SideClick src={leftIcon} onClick={() => navigate(-1)} />
         <HeaderContent>
-          <Category>동아리</Category>
-          <Title>멋사 데모데이</Title>
+          <Category>{category}</Category>
+          <Title>{title}</Title>
         </HeaderContent>
       </LeftHeader>
 
-      <InviteBtn onClick={() => navigate("/invite")}>
+      <InviteBtn onClick={() => navigate(`/invite/${projectId}`)}>
         <InviteIcon src={inviteIcon} />
         <InviteContent>초대하기</InviteContent>
       </InviteBtn>
@@ -27,6 +33,7 @@ function HeaderComponent() {
 }
 
 export default HeaderComponent;
+
 
 //Styled Components
 
@@ -75,6 +82,7 @@ const InviteBtn = styled.button`
   background: #efefef;
   border: none;
   cursor: pointer;
+  white-space: nowrap;
 `;
 
 const InviteIcon = styled.img``;
