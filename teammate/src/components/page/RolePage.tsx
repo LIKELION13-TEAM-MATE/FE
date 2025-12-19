@@ -5,6 +5,7 @@ import trash from "../../assets/trash-outline.png";
 import api from "../../lib/axios";
 import Header from "../layouts/HeaderComponent";
 import Nav from "../layouts/NavComponent";
+import { Outlet, useParams } from "react-router-dom";
 
 // 역할 타입, 상태 추가
 interface Role {
@@ -18,22 +19,106 @@ interface Member {
 }
 
 function RolePage() {
+  // const [roles, setRoles] = useState<Role[]>([]);
+
+  // const assignRole = async (roleId: number, memberId: number) => {
+  //   await api.post(`/api/v1/projects/${projectId}/roles/${roleId}/assign`, {
+  //     memberId: memberId,
+  //   });
+  // };
+
+  // const unassignRole = async (roleId: number, memberId: number) => {
+  //   await api.post(`/api/v1/projects/${projectId}/roles/${roleId}/unassign`, {
+  //     memberId: memberId,
+  //   });
+  // };
+
+  // // 역할 추가
+  // const [isAdding, setIsAdding] = useState(false);
+  // const [newRoleName, setNewRoleName] = useState("");
+
+  // const createRole = async () => {
+  //   if (!newRoleName.trim()) return;
+
+  //   try {
+  //     await api.post(`/api/v1/projects/${projectId}/roles`, {
+  //       roleName: newRoleName,
+  //     });
+
+  //     setNewRoleName("");
+  //     setIsAdding(false);
+  //     fetchRoles(); // 목록 갱신
+  //   } catch (error) {
+  //     console.error("역할 추가 실패", error);
+  //     alert("역할 추가 실패 (로그인 상태 확인)");
+  //   }
+  // };
+
+  // // 역할 목록 조회 함수
+  // const fetchRoles = async () => {
+  //   const res = await api.get(`/api/v1/projects/${pid}/roles`);
+  //   setRoles(res.data);
+  // };
+
+  // // 멤버
+  // const [members, setMembers] = useState<Member[]>([]);
+
+  // const fetchMembers = async () => {
+  //   try {
+  //     const res = await api.get(`/api/v1/projects/${pid}/chat-members`, {
+  //       params: { requesterMemberId: 10 },
+  //     });
+
+  //     setMembers(
+  //       res.data.map((m: any) => ({
+  //         memberId: m.memberId,
+  //         memberName: m.nickname,
+  //       }))
+  //     );
+  //   } catch (e) {
+  //     console.error("멤버 조회 실패", e);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   if (!pid) return;
+  //   fetchRoles();
+  //   fetchMembers();
+  // }, [pid]);
+
+  // const { projectId } = useParams();
+  // const pid = Number(projectId);
+
+  // useEffect(() => {
+  //   api
+  //     .get(`/api/v1/projects/${projectId}`)
+  //     .then((res) => {
+  //       setProject(res.data);
+  //     })
+  //     .catch((err) => {
+  //       console.error(err);
+  //     });
+  // }, [projectId]);
+  const { projectId } = useParams();
+  // const pid = Number(projectId);
+  const pid = Number(projectId) || 1;
+
   const [roles, setRoles] = useState<Role[]>([]);
-  const projectId = 1; //나중에 params로 변경
+  const [members, setMembers] = useState<Member[]>([]);
+  const [project, setProject] = useState<any>(null);
 
   const assignRole = async (roleId: number, memberId: number) => {
-    await api.post(`/api/v1/projects/${projectId}/roles/${roleId}/assign`, {
-      memberId: memberId,
+    await api.post(`/api/v1/projects/${pid}/roles/${roleId}/assign`, {
+      memberId,
     });
   };
 
   const unassignRole = async (roleId: number, memberId: number) => {
-    await api.post(`/api/v1/projects/${projectId}/roles/${roleId}/unassign`, {
-      memberId: memberId,
+    await api.post(`/api/v1/projects/${pid}/roles/${roleId}/unassign`, {
+      memberId,
     });
   };
 
-  // 역할 추가
   const [isAdding, setIsAdding] = useState(false);
   const [newRoleName, setNewRoleName] = useState("");
 
@@ -41,31 +126,27 @@ function RolePage() {
     if (!newRoleName.trim()) return;
 
     try {
-      await api.post(`/api/v1/projects/${projectId}/roles`, {
+      await api.post(`/api/v1/projects/${pid}/roles`, {
         roleName: newRoleName,
       });
 
       setNewRoleName("");
       setIsAdding(false);
-      fetchRoles(); // 목록 갱신
-    } catch (error) {
-      console.error("역할 추가 실패", error);
-      alert("역할 추가 실패 (로그인 상태 확인)");
+      fetchRoles();
+    } catch (e) {
+      console.error("역할 생성 실패", e);
+      alert("역할 추가 실패");
     }
   };
 
-  // 역할 목록 조회 함수
   const fetchRoles = async () => {
-    const res = await api.get(`/api/v1/projects/${projectId}/roles`);
+    const res = await api.get(`/api/v1/projects/${pid}/roles`);
     setRoles(res.data);
   };
 
-  // 멤버
-  const [members, setMembers] = useState<Member[]>([]);
-
   const fetchMembers = async () => {
     try {
-      const res = await api.get(`/api/v1/projects/1/chat-members`, {
+      const res = await api.get(`/api/v1/projects/${pid}/chat-members`, {
         params: { requesterMemberId: 10 },
       });
 
@@ -81,15 +162,25 @@ function RolePage() {
   };
 
   useEffect(() => {
+    if (!pid) return;
+
     fetchRoles();
     fetchMembers();
-  }, []);
 
+    api.get(`/api/v1/projects/${pid}`).then((res) => {
+      setProject(res.data);
+    });
+  }, [pid]);
   return (
     <RoleWrapper>
       <Con>
-        <Header></Header>
-        <Nav></Nav>
+        <Header
+          category={project?.category ?? ""}
+          title={project?.projectName ?? ""}
+          projectId={projectId}
+        />
+
+        <Nav projectId={projectId} />
       </Con>
       {/* 공동 헤더 컴포넌트 추가 */}
       <RoleContainer>

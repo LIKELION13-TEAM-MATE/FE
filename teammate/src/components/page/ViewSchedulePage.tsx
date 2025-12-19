@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import api from "../../lib/axios";
+import { Outlet, useParams } from "react-router-dom";
 
 function ViewSchedulePage() {
   const [event, setEvent] = useState<any>(null);
@@ -37,14 +38,29 @@ function ViewSchedulePage() {
     fetchEventDetail();
   }, [eventId]);
 
+  const { projectId } = useParams();
+  const [project, setProject] = useState<any>(null);
+
+  useEffect(() => {
+    api
+      .get(`/api/v1/projects/${projectId}`)
+      .then((res) => {
+        setProject(res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, [projectId]);
+
   return (
     <ViewScheduleWrapper>
-      <HDCon>
-        <Header></Header>
-      </HDCon>
-      <NavCon>
-        <Nav></Nav>
-      </NavCon>
+      <Header
+        category={project?.category ?? ""}
+        title={project?.projectName ?? ""}
+        projectId={projectId}
+      />
+
+      <Nav projectId={projectId} />
       {/* 공동 헤더 컴포넌트 추가 */}
       <ScheduleControlBox>
         <ScheduleControl>

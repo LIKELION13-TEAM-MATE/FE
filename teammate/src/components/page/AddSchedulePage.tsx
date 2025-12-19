@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import Plugin from "../../assets/Plugin.svg";
 import fPlugin from "../../assets/fPlugin.svg";
@@ -147,14 +148,29 @@ function AddSchedulePage() {
   // 하루종일
   const [isAllDay, setIsAllDay] = useState(false);
 
+  const { projectId } = useParams();
+  const [project, setProject] = useState<any>(null);
+
+  useEffect(() => {
+    api
+      .get(`/api/v1/projects/${projectId}`)
+      .then((res) => {
+        setProject(res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, [projectId]);
+
   return (
     <AddScheduleWrapper>
-      <HDCon>
-        <Header></Header>
-      </HDCon>
-      <NavCon>
-        <Nav></Nav>
-      </NavCon>
+      <Header
+        category={project?.category ?? ""}
+        title={project?.projectName ?? ""}
+        projectId={projectId}
+      />
+
+      <Nav projectId={projectId} />
       {/* 공동 헤더 컴포넌트 추가 */}
       <ScheduleControlBox onSubmit={handleSubmit}>
         <ScheduleControl>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Outlet, useParams } from "react-router-dom";
 import styled from "styled-components";
 import Stroke from "../../assets/Stroke.svg";
 import Header from "../layouts/HeaderComponent";
@@ -112,14 +113,33 @@ function CreateChatroomPage() {
   //   fetchMembers();
   // }, []);
 
+  const { projectId } = useParams();
+  const [project, setProject] = useState<any>(null);
+
+  useEffect(() => {
+    api
+      .get(`/api/v1/projects/${projectId}`)
+      .then((res) => {
+        setProject(res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, [projectId]);
+
   useEffect(() => {
     fetchMembers();
   }, []);
 
   return (
     <CreateChatroomWrapper>
-      <Header></Header>
-      <Nav></Nav>
+      <Header
+        category={project?.category ?? ""}
+        title={project?.projectName ?? ""}
+        projectId={projectId}
+      />
+
+      <Nav projectId={projectId} />
       <CreateContainer>
         <CreateElementForm>
           <CreatePeopleBox>

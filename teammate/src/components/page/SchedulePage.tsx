@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { Outlet, useParams } from "react-router-dom";
 import DownCaret from "../../assets/Vector.svg";
 import Header from "../layouts/HeaderComponent";
 import Nav from "../layouts/NavComponent";
@@ -7,6 +8,20 @@ import { Link } from "react-router-dom";
 import api from "../../lib/axios";
 
 function SchedulePage() {
+  const { projectId } = useParams();
+  const [project, setProject] = useState<any>(null);
+
+  useEffect(() => {
+    api
+      .get(`/api/v1/projects/${projectId}`)
+      .then((res) => {
+        setProject(res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, [projectId]);
+
   //날짜 선택 관리
   const [scheduleCountByDate, setScheduleCountByDate] = useState<
     Record<number, number>
@@ -150,12 +165,13 @@ function SchedulePage() {
   return (
     <ScheduleWrapper>
       <Con>
-        <HDCon>
-          <Header></Header>
-        </HDCon>
-        <NavCon>
-          <Nav></Nav>
-        </NavCon>
+        <Header
+          category={project?.category ?? ""}
+          title={project?.projectName ?? ""}
+          projectId={projectId}
+        />
+
+        <Nav projectId={projectId} />
       </Con>
       <ScheduleContainer>
         <Calendar>
