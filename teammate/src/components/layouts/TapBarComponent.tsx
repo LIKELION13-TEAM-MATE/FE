@@ -18,8 +18,8 @@ function TapBarComponent() {
   return (
     <Container>
       <Icon
-        src={currentPath === "/" ? homeIconColor : homeIcon}
-        onClick={() => navigate("/")}
+        src={currentPath === "/main" ? homeIconColor : homeIcon}
+        onClick={() => navigate("/main")}
       />
       <Icon
         src={
