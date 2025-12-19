@@ -38,7 +38,7 @@ function SignupPage() {
             passwordConfirm,
             });
 
-            navigate("/login");
+            navigate("/");
         } catch (err) {
             console.log(err);
         }
@@ -92,7 +92,7 @@ function SignupPage() {
         </Body>
         <Last>
             <NoAccount>이미 계정이 있나요?</NoAccount>
-            <GoSignup onClick={()=>navigate("/login")}>로그인</GoSignup>
+            <GoSignup onClick={()=>navigate("/")}>로그인</GoSignup>
         </Last>
     </Container>
   )
