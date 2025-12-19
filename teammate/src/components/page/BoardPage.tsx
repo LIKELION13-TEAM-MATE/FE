@@ -8,7 +8,7 @@ import Nav from "../../components/layouts/NavComponent";
 
 function BoardPage() {
   const { projectId } = useParams();
-  const [project, setProject] = useState(null);
+  const [project, setProject] = useState<any>(null);
 
   useEffect(() => {
     api.get(`/api/v1/projects/${projectId}`)
@@ -22,12 +22,18 @@ function BoardPage() {
 
   return (
     <B.container>
-        <Header/>
-        <Nav/>
-        <Outlet />
-        
+
+      {/* props 전달 */}
+      <Header
+        category={project?.category ?? ""}
+        title={project?.projectName ?? ""}
+        projectId={projectId}
+      />
+
+      <Nav projectId={projectId} />
+      <Outlet />
     </B.container>
   )
 }
 
-export default BoardPage
+export default BoardPage;

@@ -1,6 +1,7 @@
-import React,{ useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import * as R from '../../style/RoadmapPageStyled';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import api from '../../lib/axios';
 
 import menuIcon from '../../img/ellipsis-vertical.svg';
 import downBtn from '../../img/chevron-down.svg';
@@ -11,282 +12,161 @@ import trashIconBlack from '../../img/trash-2.svg';
 
 function RoadmapListPage() {
   const navigate = useNavigate();
-  const progress = 80;
+  const { projectId } = useParams(); 
 
-  const [openSteps, setOpenSteps] = useState<boolean[]>([false, false]);
+  const [roadmap, setRoadmap] = useState<any | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [checkedList, setCheckedList] = useState<boolean[]>([
-    false,
-    false,
-    false,
-  ]);
-  
+  const [openStep, setOpenStep] = useState(false);
 
-  const toggleCheck = (index: number) => {
-    setCheckedList(prev =>
-      prev.map((checked, i) =>
-        i === index ? !checked : checked
-      )
-    );
-  };
+  interface Member {
+  memberId?: number;
+  username?: string;
+  nickname?: string;
+}
 
-  const toggleOpen = (index: number) => {
-    setOpenSteps(prev =>
-      prev.map((open, i) =>
-        i === index ? !open : open
-      )
-    );
-  };
+
+  useEffect(() => {
+  if (!projectId) return;
+
+  api.get(`/api/v1/roadmap/roadmaps/${projectId}`)
+    .then(res => {
+      console.log("🔥 실제 응답:", res.data);
+      setRoadmap(res.data);
+    })
+    .catch(err => {
+      console.error("로드맵 조회 실패:", err);
+      console.log("🔥 서버 응답 전체:", err.response?.data);
+      console.log("🔥 상태코드:", err.response?.status);
+      console.log("🔥 에러 메시지:", err.response);
+    });
+}, [projectId]);
+
+
+  if (!roadmap) {
+  return <div>로드맵 불러오는 중...</div>;
+}
+
+const tasks = Array.isArray(roadmap.tasks) ? roadmap.tasks : [];
+const members = Array.isArray(roadmap.members) ? roadmap.members : [];
+
 
   return (
     <R.RoadmapContent>
       <R.RoadmapTop>
         <R.RoadmapTopLeft>
-          <R.Completeness>42%</R.Completeness>
+          <R.Completeness>{roadmap.progress}%</R.Completeness>
+
           <R.RoadmapTopContent>
             <R.Dday>D-16</R.Dday>
-            <R.RemainingSteps>단계 9/99</R.RemainingSteps>
+            <R.RemainingSteps>단계 {tasks.length}</R.RemainingSteps>
           </R.RoadmapTopContent>
         </R.RoadmapTopLeft>
 
-        <R.StepPlusBtn onClick={() => navigate("/roadmap/write")}>
+        <R.StepPlusBtn onClick={() => navigate(`/roadmap/${projectId}/write`)}>
           단계 추가
         </R.StepPlusBtn>
       </R.RoadmapTop>
 
+
+      {/* ⭐ 반복 렌더링: 로드맵의 모든 step */}
       <R.RoadmapStepBigBox>
-        <R.RoadmapStepBox>
-          <R.RoadmapStep>
-            <R.StepCircle open={openSteps[0]}>1</R.StepCircle>
+        {tasks.map((step: any, idx: number) => (
+          <R.RoadmapStepBox key={step.id}>
+            <R.RoadmapStep>
 
-            <R.RoadmapStepCard>
-              <R.StepCardTop>
-                <R.StepCardLeft>
-                  <R.StepCardLeftTop>
-                    <R.StepCardTitle>기획</R.StepCardTitle>
+              <R.StepCircle open={openStep}>
+                {idx + 1}
+              </R.StepCircle>
 
-                    <R.StepMember>
-                      <R.Member>
-                        <R.MemberCircle color="#E6D4FF" />
-                        <R.MemberName>김채연</R.MemberName>
-                      </R.Member>
+              <R.RoadmapStepCard>
+                <R.StepCardTop>
+                  <R.StepCardLeft>
 
-                      <R.Member>
-                        <R.MemberCircle color="#ADDDA3" />
-                        <R.MemberName>홍길순</R.MemberName>
-                      </R.Member>
-                    </R.StepMember>
-                  </R.StepCardLeftTop>
+                    <R.StepCardLeftTop>
+                      <R.StepCardTitle>{step.title ?? ""}</R.StepCardTitle>
 
-                  <R.StepCardLeftBottom>
-                    ~ 2025.11.11.
-                  </R.StepCardLeftBottom>
-                </R.StepCardLeft>
+                      {/* 멤버 리스트 출력 */}
+                      <R.StepMember>
+                        {members.map((m: Member) => (
+                          <R.Member key={m.memberId ?? m.username}>
+                            <R.MemberCircle color="#E6D4FF" />
+                            <R.MemberName>{m.nickname ?? m.username}</R.MemberName>
+                          </R.Member>
+                        ))}
+                      </R.StepMember>
+                    </R.StepCardLeftTop>
 
-                <R.StepMenu
-                  src={menuIcon}
-                  onClick={() => setMenuOpen(prev => !prev)}
-                />
+                    <R.StepCardLeftBottom>
+                      ~ {roadmap.deadline}
+                    </R.StepCardLeftBottom>
 
-                {menuOpen && (
-                  <R.Dropdown>
-                    <R.DropdownItem>
-                      <R.DropdownIcon src={pencilIcon} />
-                      <R.DropdownContent>수정하기</R.DropdownContent>
-                    </R.DropdownItem>
+                  </R.StepCardLeft>
 
-                    <R.DropdownItem className="line">
-                      <R.DropdownIcon src={trashIconBlack} />
-                      <R.DropdownContent>삭제하기</R.DropdownContent>
-                    </R.DropdownItem>
-                  </R.Dropdown>
-                )}
-              </R.StepCardTop>
+                  <R.StepMenu src={menuIcon} onClick={() => setMenuOpen(prev => !prev)} />
 
-              <R.StepCardBottom>
-                <R.ProgressBar>
-                  <R.ProgressFill percent={progress} />
-                </R.ProgressBar>
-                <R.Progress>{progress}%</R.Progress>
-              </R.StepCardBottom>
-            </R.RoadmapStepCard>
+                  {menuOpen && (
+                    <R.Dropdown>
+                      <R.DropdownItem>
+                        <R.DropdownIcon src={pencilIcon} />
+                        <R.DropdownContent>수정하기</R.DropdownContent>
+                      </R.DropdownItem>
 
-            {openSteps[0] && (
-              <R.OpenBox>
-                <R.CheckSet>
-                  <R.CheckLeft>
-                    <R.CheckLeftTop>
-                      <R.CheckBox
-                        checked={checkedList[0]}
-                        onClick={() => toggleCheck(0)}
-                      >
-                        {checkedList[0] && "✓"}
-                      </R.CheckBox>
-                      <R.CheckTitle>주제확정</R.CheckTitle>
-                    </R.CheckLeftTop>
+                      <R.DropdownItem className="line">
+                        <R.DropdownIcon src={trashIconBlack} />
+                        <R.DropdownContent>삭제하기</R.DropdownContent>
+                      </R.DropdownItem>
+                    </R.Dropdown>
+                  )}
+                </R.StepCardTop>
 
-                    <R.CheckLeftBottom>
-                      팀프로젝트 관리 앱 서비스
-                    </R.CheckLeftBottom>
-                  </R.CheckLeft>
+                {/* 진행률 */}
+                <R.StepCardBottom>
+                  <R.ProgressBar>
+                    <R.ProgressFill percent={roadmap.progress} />
+                  </R.ProgressBar>
+                  <R.Progress>{roadmap.progress}%</R.Progress>
+                </R.StepCardBottom>
 
-                  <R.CheckRight>
-                    <R.CheckComment src={commentIcon} />
-                    <R.CheckDelete src={xIcon} />
-                  </R.CheckRight>
-                </R.CheckSet>
+              </R.RoadmapStepCard>
 
-                <R.CheckSet>
-                  <R.CheckLeft>
-                    <R.CheckLeftTop>
-                      <R.CheckBox
-                        checked={checkedList[1]}
-                        onClick={() => toggleCheck(1)}
-                      >
-                        {checkedList[1] && "✓"}
-                      </R.CheckBox>
-                      <R.CheckTitle>주제확정</R.CheckTitle>
-                    </R.CheckLeftTop>
-                  </R.CheckLeft>
+              {/* step 펼치기 */}
+              {openStep && (
+                <R.OpenBox>
+                  {tasks.map((task: any, idx: number) => (
+                      <R.CheckSet key={task.id}>
+                        <R.CheckLeft>
+                          <R.CheckLeftTop>
+                            <R.CheckBox checked={task.checked}>
+                              {task.checked && "✓"}
+                            </R.CheckBox>
+                            <R.CheckTitle>{task.title}</R.CheckTitle>
+                          </R.CheckLeftTop>
 
-                  <R.CheckRight>
-                    <R.CheckComment src={commentIcon} />
-                    <R.CheckDelete src={xIcon} />
-                  </R.CheckRight>
-                </R.CheckSet>
+                          <R.CheckLeftBottom>{task.content}</R.CheckLeftBottom>
+                        </R.CheckLeft>
 
-                <R.CheckTaskInputBox>
-                  <R.CheckTaskInput placeholder="세부 Task를 입력하세요." />
-                  <R.CheckTaskBtn>등록</R.CheckTaskBtn>
-                </R.CheckTaskInputBox>
-              </R.OpenBox>
-            )}
-          </R.RoadmapStep>
+                    <R.CheckRight>
+                      <R.CheckComment src={commentIcon} />
+                      <R.CheckDelete src={xIcon} />
+                    </R.CheckRight>
+                  </R.CheckSet>
+                    ))}
+                </R.OpenBox>
+              )}
 
-          <R.OpenBtn
-            src={downBtn}
-            open={openSteps[0]}
-            onClick={() => toggleOpen(0)}
-          />
-        </R.RoadmapStepBox>
+            </R.RoadmapStep>
 
-        <R.RoadmapStepBox>
-          <R.RoadmapStep>
-            <R.StepCircle open={openSteps[1]} isLast>2</R.StepCircle>
+            <R.OpenBtn
+              src={downBtn}
+              open={openStep}
+              onClick={() => setOpenStep(prev => !prev)}
+            />
 
-            <R.RoadmapStepCard>
-              <R.StepCardTop>
-                <R.StepCardLeft>
-                  <R.StepCardLeftTop>
-                    <R.StepCardTitle>디자인</R.StepCardTitle>
-
-                    <R.StepMember>
-                      <R.Member>
-                        <R.MemberCircle color="#E6D4FF" />
-                        <R.MemberName>김채연</R.MemberName>
-                      </R.Member>
-
-                      <R.Member>
-                        <R.MemberCircle color="#ADDDA3" />
-                        <R.MemberName>홍길순</R.MemberName>
-                      </R.Member>
-                    </R.StepMember>
-                  </R.StepCardLeftTop>
-
-                  <R.StepCardLeftBottom>
-                    ~ 2025.11.11.
-                  </R.StepCardLeftBottom>
-                </R.StepCardLeft>
-
-                <R.StepMenu
-                  src={menuIcon}
-                  onClick={() => setMenuOpen(prev => !prev)}
-                />
-
-                {menuOpen && (
-                  <R.Dropdown>
-                    <R.DropdownItem>
-                      <R.DropdownIcon src={pencilIcon} />
-                      <R.DropdownContent>수정하기</R.DropdownContent>
-                    </R.DropdownItem>
-
-                    <R.DropdownItem className="line">
-                      <R.DropdownIcon src={trashIconBlack} />
-                      <R.DropdownContent>삭제하기</R.DropdownContent>
-                    </R.DropdownItem>
-                  </R.Dropdown>
-                )}
-              </R.StepCardTop>
-
-              <R.StepCardBottom>
-                <R.ProgressBar>
-                  <R.ProgressFill percent={progress} />
-                </R.ProgressBar>
-                <R.Progress>{progress}%</R.Progress>
-              </R.StepCardBottom>
-            </R.RoadmapStepCard>
-
-            {openSteps[1] && (
-              <R.OpenBox>
-                <R.CheckSet>
-                  <R.CheckLeft>
-                    <R.CheckLeftTop>
-                      <R.CheckBox
-                        checked={checkedList[0]}
-                        onClick={() => toggleCheck(0)}
-                      >
-                        {checkedList[0] && "✓"}
-                      </R.CheckBox>
-                      <R.CheckTitle>주제확정</R.CheckTitle>
-                    </R.CheckLeftTop>
-
-                    <R.CheckLeftBottom>
-                      팀프로젝트 관리 앱 서비스
-                    </R.CheckLeftBottom>
-                  </R.CheckLeft>
-
-                  <R.CheckRight>
-                    <R.CheckComment src={commentIcon} />
-                    <R.CheckDelete src={xIcon} />
-                  </R.CheckRight>
-                </R.CheckSet>
-
-                <R.CheckSet>
-                  <R.CheckLeft>
-                    <R.CheckLeftTop>
-                      <R.CheckBox
-                        checked={checkedList[1]}
-                        onClick={() => toggleCheck(1)}
-                      >
-                        {checkedList[1] && "✓"}
-                      </R.CheckBox>
-                      <R.CheckTitle>주제확정</R.CheckTitle>
-                    </R.CheckLeftTop>
-                  </R.CheckLeft>
-
-                  <R.CheckRight>
-                    <R.CheckComment src={commentIcon} />
-                    <R.CheckDelete src={xIcon} />
-                  </R.CheckRight>
-                </R.CheckSet>
-
-                <R.CheckTaskInputBox>
-                  <R.CheckTaskInput placeholder="세부 Task를 입력하세요." />
-                  <R.CheckTaskBtn>등록</R.CheckTaskBtn>
-                </R.CheckTaskInputBox>
-              </R.OpenBox>
-            )}
-          </R.RoadmapStep>
-
-          <R.OpenBtn
-            src={downBtn}
-            open={openSteps[1]}
-            onClick={() => toggleOpen(1)}
-          />
-        </R.RoadmapStepBox>
+          </R.RoadmapStepBox>
+        ))}
       </R.RoadmapStepBigBox>
     </R.RoadmapContent>
   );
 }
 
-export default RoadmapListPage
+export default RoadmapListPage;
