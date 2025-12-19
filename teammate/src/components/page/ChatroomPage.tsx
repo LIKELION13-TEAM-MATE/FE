@@ -193,7 +193,7 @@ function ChatroomPage() {
               </OtherChatBox>
             )
           )}
-          {/* <MyChatBox>
+          <MyChatBox>
             <ChatTime>오전 9:30</ChatTime>
             <MyChat>오늘은 기획 단계 마무리합시다!</MyChat>
           </MyChatBox>
@@ -212,7 +212,7 @@ function ChatroomPage() {
               </OtherCaht>
               <ChatTime>오전 9:30</ChatTime>
             </ChatBoxTime>
-          </OtherChatBox> */}
+          </OtherChatBox>
           {/* {messages.map((msg, idx) => (
             <MyChatBox key={idx}>
               <ChatTime>{msg.time}</ChatTime>
