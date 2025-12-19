@@ -2,10 +2,15 @@ import React from "react";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 
-function NavComponent() {
+interface NavProps {
+  projectId?: string;
+}
+
+function NavComponent({ projectId }: NavProps) {
+
   return (
     <NavWrapper>
-      <StyledLink to="/board/:id">
+      <StyledLink to={`/board/${projectId}`}>
         <NavBtn>게시판</NavBtn>
       </StyledLink>
       <StyledLink to="/RolePage">
@@ -14,7 +19,8 @@ function NavComponent() {
       <StyledLink to="/SchedulePage">
         <NavBtn>일정</NavBtn>
       </StyledLink>
-      <StyledLink to="/roadmap">
+
+      <StyledLink to={`/roadmap/${projectId}`}>
         <NavBtn>로드맵</NavBtn>
       </StyledLink>
       <StyledLink to="/ListChatroomPage">
@@ -25,6 +31,7 @@ function NavComponent() {
 }
 
 export default NavComponent;
+
 
 //Styled Components
 
