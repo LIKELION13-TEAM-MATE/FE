@@ -3,6 +3,8 @@ import styled from "styled-components";
 import plusimg from "../../assets/plus.png";
 import trash from "../../assets/trash-outline.png";
 import api from "../../lib/axios";
+import Header from "../layouts/HeaderComponent";
+import Nav from "../layouts/NavComponent";
 
 // 역할 타입, 상태 추가
 interface Role {
@@ -62,8 +64,20 @@ function RolePage() {
   const [members, setMembers] = useState<Member[]>([]);
 
   const fetchMembers = async () => {
-    const res = await api.get(`/api/v1/projects/${projectId}/members`);
-    setMembers(res.data);
+    try {
+      const res = await api.get(`/api/v1/projects/1/chat-members`, {
+        params: { requesterMemberId: 10 },
+      });
+
+      setMembers(
+        res.data.map((m: any) => ({
+          memberId: m.memberId,
+          memberName: m.nickname,
+        }))
+      );
+    } catch (e) {
+      console.error("멤버 조회 실패", e);
+    }
   };
 
   useEffect(() => {
@@ -73,6 +87,10 @@ function RolePage() {
 
   return (
     <RoleWrapper>
+      <Con>
+        <Header></Header>
+        <Nav></Nav>
+      </Con>
       {/* 공동 헤더 컴포넌트 추가 */}
       <RoleContainer>
         <AddContainer>
@@ -174,10 +192,9 @@ const RoleWrapper = styled.div`
 `;
 
 const RoleContainer = styled.div`
+  margin-top: 20px;
   width: 295px;
-  height: 613px;
-  min-height: 90vh;
-  /* margin: 25px; */
+  min-height: 80vh;
   border-radius: 20px;
   background-color: #ffffff;
   box-shadow: 0px 1px 6px rgba(198, 198, 198, 0.8);
@@ -211,9 +228,6 @@ const AddBtn = styled.div`
   font-weight: 500;
   cursor: pointer;
 `;
-const AddBoxBtn = styled.div`
-  display: block;
-`;
 
 //이름별 역할
 const NameContainer = styled.div`
@@ -235,5 +249,18 @@ const TrashImgBox = styled.div`
 `;
 
 //추가
+const Con = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+  /* overflow-y: auto; */
+  width: 100%;
+  height: auto;
+  p {
+    margin: 0;
+    font-family: Pretendard;
+  }
+`;
 
 export default RolePage;

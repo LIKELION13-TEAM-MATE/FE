@@ -13,48 +13,6 @@ function MySchedulePage() {
     Record<number, number>
   >({});
 
-  // useEffect(() => {
-  //   const fetchMonthEvents = async () => {
-  //     const res = await api.get(`/api/v1/projects/1/events/month`, {
-  //       params: {
-  //         year: 2025,
-  //         month: 11,
-  //       },
-  //     });
-
-  //     const map: Record<number, number> = {};
-  //     res.data.forEach((item: any) => {
-  //       const day = new Date(item.date).getDate();
-  //       map[day] = item.eventCount;
-  //     });
-
-  //     setScheduleCountByDate(map);
-  //   };
-
-  //   fetchMonthEvents();
-  // }, []);
-
-  // 일정리스트
-  // const [events, setEvents] = useState<any[]>([]);
-
-  // const handleDateClick = async (date: number) => {
-  //   setSelectedDate(date);
-
-  //   const yyyy = 2025;
-  //   const mm = String(11).padStart(2, "0");
-  //   const dd = String(date).padStart(2, "0");
-
-  //   const res = await api.get(`/api/v1/projects/1/events/day`, {
-  //     params: {
-  //       date: `${yyyy}-${mm}-${dd}`,
-  //     },
-  //   });
-
-  //   setEvents(res.data);
-  // };
-
-  // onClick={() => date && handleDateClick(date)}
-
   const [selectedDate, setSelectedDate] = useState<number | null>(null);
   const dates = [
     null,
@@ -90,6 +48,7 @@ function MySchedulePage() {
     28,
     29,
     30,
+    31,
   ]; //임시데이터
 
   // // 날짜별 일정 개수 (임시)
@@ -111,7 +70,7 @@ function MySchedulePage() {
       <ScheduleContainer>
         <Calendar>
           <CalendarDateBox>
-            <CalendarDate>2025.11</CalendarDate>
+            <CalendarDate>2025.12</CalendarDate>
             <CalendarDateImg>
               <img
                 src={DownCaret}

@@ -10,6 +10,23 @@ import api from "../../lib/axios";
 import { useLocation } from "react-router-dom";
 
 function AddSchedulePage() {
+  const [memberList, setMemberList] = useState<
+    { memberId: number; memberName: string }[]
+  >([]);
+
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try {
+        const res = await api.get(`/api/v1/projects/1/members`);
+        setMemberList(res.data);
+      } catch (e) {
+        console.error("멤버 조회 실패", e);
+      }
+    };
+
+    fetchMembers();
+  }, []);
+
   const [title, setTitle] = useState("");
   const [startDay, setStartDay] = useState("");
   const [startTime, setStartTime] = useState("");
@@ -18,7 +35,18 @@ function AddSchedulePage() {
   const [memo, setMemo] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
 
+  const [participants, setParticipants] = useState<number[]>([]);
+
   const navigate = useNavigate();
+
+  const repeatMap: any = {
+    안함: "NONE",
+    매일: "DAILY",
+    매주: "WEEKLY",
+    "2주마다": "BIWEEKLY",
+    매월: "MONTHLY",
+    매년: "YEARLY",
+  };
 
   const toISO = (day: string, time: string) => {
     return new Date(`${day}T${time}`).toISOString();
@@ -28,30 +56,53 @@ function AddSchedulePage() {
   const params = new URLSearchParams(location.search);
   const eventId = params.get("eventId"); // 있으면 수정
 
+  const alarmMap: any = {
+    안함: 0,
+    "10분 전": 10,
+    "30분 전": 30,
+    "1시간 전": 60,
+    "하루 전": 1440,
+  };
+
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!title || !startDay || !startTime || !endDay || !endTime) {
+      alert("필수 입력 값이 비어있어요!");
+      return;
+    }
 
     const payload = {
       title,
       memo,
-      startDateTime: `${startDay}T${startTime}`,
-      endDateTime: `${endDay}T${endTime}`,
+      startDateTime: toISO(startDay, startTime),
+      endDateTime: toISO(endDay, endTime),
       allDay: isAllDay,
-      repeatType: repeat,
-      alarmOffsetMinutes: Number(alarm),
-      participantIds: [2, 5], // 임시
+      repeatType: repeatMap[repeat] || repeat,
+      alarmOffsetMinutes: alarmMap[alarm] ?? 0,
+      // participantIds: [2, 5],
+      // participantIds: [2],
+      // participantIds: [2, 3, 4],
+      participantIds: participants,
       visibleToParticipantsOnly: isPrivate,
     };
 
-    if (eventId) {
-      // 수정
-      await api.put(`/api/v1/projects/1/events/${eventId}`, payload);
-    } else {
-      // 생성
-      await api.post(`/api/v1/projects/1/events`, payload);
+    try {
+      if (eventId) {
+        await api.put(`/api/v1/projects/1/events/${eventId}`, payload);
+      } else {
+        await api.post(`/api/v1/projects/1/events`, payload);
+      }
+
+      alert("성공!");
+      navigate("/SchedulePage");
+    } catch (err: any) {
+      console.log(err.response?.data);
+      alert(JSON.stringify(err.response?.data));
     }
   };
-
   useEffect(() => {
     if (!eventId) return;
 
@@ -63,8 +114,26 @@ function AddSchedulePage() {
       setTitle(e.title);
       setMemo(e.memo);
       setIsAllDay(e.allDay);
+      setParticipants(e.participantIds);
       setRepeat(e.repeatType);
       setAlarm(String(e.alarmOffsetMinutes));
+
+      // 날짜 / 시간 세팅
+      setStartDay(e.startDateTime.slice(0, 10));
+      setStartTime(e.startDateTime.slice(11, 16));
+      setEndDay(e.endDateTime.slice(0, 10));
+      setEndTime(e.endDateTime.slice(11, 16));
+
+      const reverseRepeatMap: any = {
+        NONE: "안함",
+        DAILY: "매일",
+        WEEKLY: "매주",
+        BIWEEKLY: "2주마다",
+        MONTHLY: "매월",
+        YEARLY: "매년",
+      };
+
+      setRepeat(reverseRepeatMap[e.repeatType]);
     };
 
     fetchEvent();
@@ -207,6 +276,22 @@ function AddSchedulePage() {
             <SetWoBox>
               <SetWo
                 value={worker}
+                onChange={(e) => {
+                  setWorker(e.target.value);
+                  setParticipants([Number(e.target.value)]);
+                }}
+                selected={worker !== "없음"}
+              >
+                <option value="">없음</option>
+
+                {memberList.map((m) => (
+                  <option key={m.memberId} value={m.memberId}>
+                    {m.memberName}
+                  </option>
+                ))}
+              </SetWo>
+              {/* <SetWo
+                value={worker}
                 onChange={(e) => setWorker(e.target.value)}
                 selected={worker !== "없음"}
               >
@@ -215,7 +300,7 @@ function AddSchedulePage() {
                 <option>홍길동</option>
                 <option>홍길순</option>
                 <option>모두</option>
-              </SetWo>
+              </SetWo> */}
               {/* <Worker><img src={Stroke} alt="Stroke" style={{ width:'10px', height:'10px', marginLeft:'4px', marginTop:'7px' }}/></Worker> */}
             </SetWoBox>
             <SetCoWo>홍길동</SetCoWo>

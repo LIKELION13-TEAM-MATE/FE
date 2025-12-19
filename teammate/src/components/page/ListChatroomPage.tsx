@@ -32,12 +32,27 @@ function ListChatroomPage() {
   const memberId = 10; // 🔹 로그인 붙이면 제거
   // const memberId = user.id;
 
+  // useEffect(() => {
+  //   const fetchChatrooms = async () => {
+  //     try {
+  //       const res = await api.get(`/api/v1/projects/${projectId}/chatrooms`, {
+  //         params: { memberId },
+  //       });
+  //       setChatrooms(res.data);
+  //     } catch (e) {
+  //       console.error("채팅방 목록 조회 실패", e);
+  //     }
+  //   };
+
+  //   fetchChatrooms();
+  // }, []);
   useEffect(() => {
     const fetchChatrooms = async () => {
       try {
         const res = await api.get(`/api/v1/projects/${projectId}/chatrooms`, {
           params: { memberId },
         });
+
         setChatrooms(res.data);
       } catch (e) {
         console.error("채팅방 목록 조회 실패", e);

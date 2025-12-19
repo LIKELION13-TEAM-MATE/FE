@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Stroke from "../../assets/Stroke.svg";
 import Header from "../layouts/HeaderComponent";
@@ -16,6 +16,8 @@ const PEOPLE_LIST = [
 function CreateChatroomPage() {
   const [isOpen, setIsOpen] = useState(false);
 
+  const [people, setPeople] = useState<{ id: number; name: string }[]>([]);
+
   const navigate = useNavigate();
 
   const [selectedPeople, setSelectedPeople] = useState<number[]>([]);
@@ -28,29 +30,91 @@ function CreateChatroomPage() {
     );
   };
 
-  const createChatRoom = async () => {
+  // const fetchMembers = async () => {
+  //   try {
+  //     const res = await api.get(`/api/v1/projects/1/chat-members`, {
+  //       withCredentials: true,
+  //     });
+
+  //     const members = res.data.map((m: any) => ({
+  //       id: m.memberId,
+  //       name: m.nickname,
+  //     }));
+
+  //     setPeople(members);
+  //   } catch (error) {
+  //     console.error("멤버 조회 실패", error);
+  //   }
+  // };
+
+  const fetchMembers = async () => {
     try {
-      await api.post(
-        `/api/v1/projects/1/chatrooms`,
-        {
-          name: roomName,
-          inviteMemberIds: selectedPeople,
-          password,
-        },
-        {
-          params: {
-            creatorMemberId: 10,
-          },
-        }
-      );
+      const res = await api.get(`/api/v1/projects/1/chat-members`, {
+        params: { requesterMemberId: 10 },
+      });
+
+      const members = res.data.map((m: any) => ({
+        id: m.memberId,
+        name: m.nickname,
+      }));
+
+      setPeople(members);
+    } catch (error) {
+      console.error("멤버 조회 실패", error);
+    }
+  };
+
+  const createChatRoom = async () => {
+    if (!roomName.trim()) {
+      alert("방 이름을 입력하세요!");
+      return;
+    }
+
+    if (selectedPeople.length === 0) {
+      alert("대화 상대를 1명 이상 선택하세요!");
+      return;
+    }
+
+    try {
+      await api.post(`/api/v1/projects/1/chatrooms`, {
+        name: roomName,
+        inviteMemberIds: selectedPeople,
+        password,
+      });
 
       alert("채팅방 생성 완료");
       navigate("/ListChatroomPage");
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      console.error(error.response?.data || error);
       alert("채팅방 생성 실패");
     }
   };
+
+  // useEffect(() => {
+  //   const fetchMembers = async () => {
+  //     try {
+  //       const res = await api.get("/api/v1/projects/1/members", {
+  //         withCredentials: true,
+  //       });
+
+  //       // 👉 백엔드 응답 형식에 맞게 수정
+  //       const list = res.data.members.map((m: any) => ({
+  //         id: m.memberId,
+  //         name: m.name,
+  //       }));
+
+  //       setPeople(list);
+  //     } catch (err) {
+  //       console.error("멤버 조회 실패", err);
+  //     }
+  //   };
+
+  //   fetchMembers();
+  // }, []);
+
+  useEffect(() => {
+    fetchMembers();
+  }, []);
 
   return (
     <CreateChatroomWrapper>
@@ -62,10 +126,12 @@ function CreateChatroomPage() {
             <PeopleTxt> 대화상대 선택</PeopleTxt>
             <PeopleSelectBox onClick={() => setIsOpen(!isOpen)}>
               {selectedPeople.length > 0
-                ? PEOPLE_LIST.filter((p) => selectedPeople.includes(p.id))
+                ? people
+                    .filter((p) => selectedPeople.includes(p.id))
                     .map((p) => p.name)
                     .join(", ")
                 : "대화상대를 선택하세요"}
+
               <Arrow>
                 <img src={Stroke} alt="Stoke" />
               </Arrow>
@@ -73,7 +139,7 @@ function CreateChatroomPage() {
 
             {isOpen && (
               <Dropdown>
-                {PEOPLE_LIST.map((person) => (
+                {people.map((person) => (
                   <DropdownItem key={person.id}>
                     <input
                       type="checkbox"

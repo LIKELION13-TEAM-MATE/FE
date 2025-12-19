@@ -12,16 +12,32 @@ function SchedulePage() {
     Record<number, number>
   >({});
 
+  // useEffect(() => {
+  //   const fetchMonthEvents = async () => {
+  //     const res = await api.get(`/api/v1/projects/1/events/month`, {
+  //       params: {
+  //         year: 2025,
+  //         month: 11,
+  //       },
+  //     });
+  // const today = new Date();
+  // const today = new Date().getDate();
+  // const [year, setYear] = useState(today.getFullYear());
+  // const [month, setMonth] = useState(today.getMonth() + 1);
+  const now = new Date(); // Date 객체
+  const [year, setYear] = useState(now.getFullYear());
+  const [month, setMonth] = useState(now.getMonth() + 1);
+
+  const today = now.getDate(); // 오늘 날짜 숫자 (달력 하이라이트용)
+
   useEffect(() => {
     const fetchMonthEvents = async () => {
       const res = await api.get(`/api/v1/projects/1/events/month`, {
-        params: {
-          year: 2025,
-          month: 11,
-        },
+        params: { year, month },
       });
 
       const map: Record<number, number> = {};
+
       res.data.forEach((item: any) => {
         const day = new Date(item.date).getDate();
         map[day] = item.eventCount;
@@ -31,7 +47,19 @@ function SchedulePage() {
     };
 
     fetchMonthEvents();
-  }, []);
+  }, [year, month]);
+
+  //     const map: Record<number, number> = {};
+  //     res.data.forEach((item: any) => {
+  //       const day = new Date(item.date).getDate();
+  //       map[day] = item.eventCount;
+  //     });
+
+  //     setScheduleCountByDate(map);
+  //   };
+
+  //   fetchMonthEvents();
+  // }, []);
 
   // 일정리스트
   const [events, setEvents] = useState<any[]>([]);
@@ -39,8 +67,8 @@ function SchedulePage() {
   const handleDateClick = async (date: number) => {
     setSelectedDate(date);
 
-    const yyyy = 2025;
-    const mm = String(11).padStart(2, "0");
+    const yyyy = year;
+    const mm = String(month).padStart(2, "0");
     const dd = String(date).padStart(2, "0");
 
     const res = await api.get(`/api/v1/projects/1/events/day`, {
@@ -51,6 +79,22 @@ function SchedulePage() {
 
     setEvents(res.data);
   };
+
+  // const handleDateClick = async (date: number) => {
+  //   setSelectedDate(date);
+
+  //   const yyyy = 2025;
+  //   const mm = String(11).padStart(2, "0");
+  //   const dd = String(date).padStart(2, "0");
+
+  //   const res = await api.get(`/api/v1/projects/1/events/day`, {
+  //     params: {
+  //       date: `${yyyy}-${mm}-${dd}`,
+  //     },
+  //   });
+
+  //   setEvents(res.data);
+  // };
 
   // onClick={() => date && handleDateClick(date)}
 
@@ -101,7 +145,6 @@ function SchedulePage() {
   // };
 
   //오늘 날짜
-  const today = new Date().getDate();
   // const today = 16; //임시날짜(확인용!)
 
   return (
@@ -117,7 +160,9 @@ function SchedulePage() {
       <ScheduleContainer>
         <Calendar>
           <CalendarDateBox>
-            <CalendarDate>2025.11</CalendarDate>
+            <CalendarDate>
+              {year}.{String(month).padStart(2, "0")}
+            </CalendarDate>
             <CalendarDateImg>
               <img
                 src={DownCaret}
@@ -146,7 +191,8 @@ function SchedulePage() {
                     isToday={date === today}
                     isSelected={date !== null && selectedDate === date}
                     isSunday={isSunday}
-                    onClick={() => date && setSelectedDate(date)}
+                    onClick={() => date && handleDateClick(date)}
+                    // onClick={() => date && setSelectedDate(date)}
                   >
                     <DateNumber>{date}</DateNumber>
 
@@ -167,8 +213,17 @@ function SchedulePage() {
         </Calendar>
         <ScheduleBox>
           <ScheduleDate>
-            <ScheduleDayDate>7일</ScheduleDayDate>
-            <ScheduleDWDate>목</ScheduleDWDate>
+            <ScheduleDayDate>
+              {selectedDate ? `${selectedDate}일` : ""}
+            </ScheduleDayDate>
+
+            <ScheduleDWDate>
+              {selectedDate
+                ? ["일", "월", "화", "수", "목", "금", "토"][
+                    new Date(year, month - 1, selectedDate).getDay()
+                  ]
+                : ""}
+            </ScheduleDWDate>
           </ScheduleDate>
           {events.length === 0 ? (
             <ScheduleDateNone>등록된 일정이 없습니다.</ScheduleDateNone>
