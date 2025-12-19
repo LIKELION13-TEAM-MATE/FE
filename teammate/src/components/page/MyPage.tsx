@@ -34,7 +34,11 @@ function MyPage() {
         );
 
         console.log("MyPage 응답:", res.data);
-        setMyData(res.data);
+        setMyData({
+          name: res.data.nickname ?? "사용자",
+          progress: res.data.progress ?? 0,
+          todos: res.data.todos ?? [],
+        });
       } catch (error) {
         console.error("MyPage API 실패", error);
       }
@@ -83,8 +87,8 @@ function MyPage() {
           <TotoTitle>나의 할 일</TotoTitle>
           <ToDoBox>
             <MyCheList>
-              <MyCheList>
-                {myData.todos.length === 0 ? (
+              {/* <MyCheList>
+                {!myData.todos || myData.todos.length === 0 ? (
                   <NoWork>할 일이 없습니다.</NoWork>
                 ) : (
                   myData.todos.map((todo, idx) => (
@@ -96,10 +100,10 @@ function MyPage() {
                     </CheCon>
                   ))
                 )}
-              </MyCheList>
+              </MyCheList> */}
               {/* <NoWork>할 일이 없습니다.</NoWork> */}
 
-              {/* <CheCon>
+              <CheCon>
                 <MyCheckbox type="checkbox" /> 기획서 작성
                 <CheSubBox>
                   <ChSub>멋사 데모데이</ChSub>
@@ -116,7 +120,7 @@ function MyPage() {
                 <CheSubBox>
                   <ChSub>경영 교양 팀플</ChSub>
                 </CheSubBox>
-              </CheCon> */}
+              </CheCon>
             </MyCheList>
             <MyDDay>D-1</MyDDay>
           </ToDoBox>

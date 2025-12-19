@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import Header from "../layouts/HeaderComponent";
 import Nav from "../layouts/NavComponent";
 import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import { useEffect, useState } from "react";
 import api from "../../lib/axios";
@@ -20,37 +21,40 @@ interface Chatroom {
 }
 
 function ListChatroomPage() {
+  const { projectId } = useParams();
+  const [project, setProject] = useState<any>(null);
   const [chatrooms, setChatrooms] = useState<Chatroom[]>([]);
-
-  // const location = useLocation();
-  // const params = new URLSearchParams(location.search);
-
-  // const chatRoomId = Number(params.get("chatRoomId"));
-  // const memberId = Number(params.get("memberId"));
-
-  const projectId = 1;
-  const memberId = 10; // 🔹 로그인 붙이면 제거
-  // const memberId = user.id;
+  const memberId = 10;
 
   useEffect(() => {
-    const fetchChatrooms = async () => {
-      try {
-        const res = await api.get(`/api/v1/projects/${projectId}/chatrooms`, {
-          params: { memberId },
-        });
-        setChatrooms(res.data);
-      } catch (e) {
-        console.error("채팅방 목록 조회 실패", e);
-      }
-    };
+    if (!projectId) return;
 
-    fetchChatrooms();
-  }, []);
+    api
+      .get(`/api/v1/projects/${projectId}`)
+      .then((res) => setProject(res.data))
+      .catch(console.error);
+  }, [projectId]);
 
+  useEffect(() => {
+    if (!projectId) return;
+
+    api
+      .get(`/api/v1/projects/${projectId}/chatrooms`, {
+        params: { memberId },
+      })
+      .then((res) => setChatrooms(res.data))
+      .catch((e) => console.error("채팅방 목록 조회 실패", e));
+  }, [projectId]);
   return (
     <ListChatroomWrapper>
-      <Header></Header>
-      <Nav></Nav>
+      <Header
+        category={project?.category ?? ""}
+        title={project?.projectName ?? ""}
+        projectId={projectId}
+      />
+
+      <Nav projectId={projectId} />
+
       <SearchCBox>
         <SearchCR>
           <SearchInput type="text" placeholder="검색어를 입력하세요." />
