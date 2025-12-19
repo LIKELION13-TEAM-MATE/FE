@@ -22,7 +22,7 @@ function LoginPage() {
 
         console.log("응답:", res.data);
 
-        navigate("/");
+        navigate("/main");
     } catch (err: any) {
         console.error("에러:", err.response?.status, err.response?.data);
     }
