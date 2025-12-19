@@ -36,7 +36,7 @@ const handleCreateProject = async () => {
     });
 
     alert("프로젝트가 생성되었습니다.");
-    navigate("/");
+    navigate("/main");
   } catch (err: any) {
     console.error(err);
 
